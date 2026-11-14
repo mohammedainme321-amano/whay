@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إدارة شؤون المقر</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config={theme:{extend:{colors:{navy:'#023047',ocean:'#219EBC',sky:'#8ECAE6',amber:'#FFB703',org:'#FB8500'},fontFamily:{sans:['Cairo','sans-serif']}}}}</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style type="text/tailwindcss">
+body{@apply bg-[#F8FAFC] text-navy font-sans}
+.btn{@apply px-4 py-2 rounded-xl font-bold text-sm inline-flex items-center justify-center gap-2 transition active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ocean}
+.b1{@apply bg-ocean text-white hover:bg-navy}.b2{@apply bg-org text-white hover:opacity-90}
+.b3{@apply bg-white text-navy border border-sky hover:bg-sky/30}.bd{@apply bg-navy text-white hover:bg-ocean}
+.card{@apply bg-white rounded-2xl border border-sky/60 shadow-sm}
+.inp{@apply w-full rounded-xl border border-sky bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ocean}
+.bdg{@apply inline-block rounded-full px-2.5 py-0.5 text-xs font-bold}
+.tab{@apply px-4 py-2 rounded-xl font-bold text-sm text-white/80 hover:bg-white/10 whitespace-nowrap}
+.tab.on{@apply bg-ocean text-white}
+.pill{@apply px-3 py-1 rounded-full text-sm font-bold border border-sky bg-white whitespace-nowrap}
+.pill.on{@apply bg-navy text-white border-navy}
+</style>
+</head>
+<body>
+<header class="sticky top-0 z-40 bg-navy shadow-lg">
+<div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+<h1 class="text-xl font-extrabold text-white flex items-center gap-2"><i data-lucide="building-2" class="text-sky"></i>إدارة شؤون المقر</h1>
+<nav id="nav" class="flex gap-1 overflow-x-auto flex-1"></nav>
+<button class="btn b2" data-a="link"><i data-lucide="external-link" class="w-4 h-4"></i>نظام دار القرآن</button>
+</div>
+</header>
+<main id="app" class="max-w-6xl mx-auto px-4 py-6"></main>
+<footer class="max-w-6xl mx-auto px-4 pb-8 flex flex-wrap items-center gap-2 text-xs text-navy/60">
+<span class="flex-1">تُحفظ البيانات في متصفح هذا الجهاز.</span>
+<button class="btn b3" data-a="exp"><i data-lucide="download" class="w-4 h-4"></i>تصدير نسخة احتياطية</button>
+<button class="btn b3" data-a="imp"><i data-lucide="upload" class="w-4 h-4"></i>استيراد نسخة</button>
+<input type="file" id="fi" accept="application/json" class="hidden">
+</footer>
+<div id="toast" class="fixed bottom-4 inset-x-4 mx-auto max-w-sm bg-navy text-white text-sm font-bold rounded-xl px-4 py-3 text-center hidden z-[60]"></div>
+<script>
+/* ===== الإعدادات: اربط نظام دار القرآن وSupabase هنا ===== */
+const MAIN_SYSTEM_URL="";            // رابط نظام الإدارة العامة لدار القرآن
+const SUPABASE_URL="",SUPABASE_ANON_KEY=""; // للربط لاحقًا بقاعدة Supabase المشتركة
+const KEY="hq_affairs_v1";
+
+/* ===== طبقة التخزين (async لتسهل الاستبدال بـ Supabase) ===== */
+const Store={
+  async load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}},
+  async save(s){try{localStorage.setItem(KEY,JSON.stringify(s));return true}catch(e){return false}}
+};
+
+/* ===== أدوات ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
+const day=(n=0)=>{const d=new Date();d.setDate(d.getDate()+n);return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const daysTo=d=>Math.round((new Date(d)-new Date(day()))/864e5);
+const fmt=t=>new Date(t).toLocaleString("ar",{dateStyle:"medium",timeStyle:"short",calendar:"gregory"});
+const KC=["مشروب","وجبة","أداة تنظيف","بلاستيك","ورق","غيرها"],WC=["صوتيات","قرطاسية","أجهزة","أثاث","أدوات صيانة","أخرى"];
+const LT={add:["circle-plus","bg-ocean"],out:["circle-minus","bg-amber"],del:["trash-2","bg-navy"],edit:["pencil","bg-sky"],rent:["handshake","bg-org"],ret:["undo-2","bg-ocean"],warn:["triangle-alert","bg-amber"],crit:["siren","bg-org"]};
+let S,view="home",q="",kc="الكل",wc="الكل";
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.remove("hidden");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),3500)}
+function log(t,m){S.l.unshift({id:uid(),t,m,at:Date.now()});S.l.length=Math.min(S.l.length,200)}
+async function commit(){if(!await Store.save(S))toast("تعذر الحفظ: مساحة التخزين ممتلئة. صدّر نسخة وقلّل حجم الصور.");render()}
+
+/* ===== منطق الحالة ===== */
+const hasMin=i=>i.min!==""&&i.min!=null,low=i=>hasMin(i)&&i.q<=+i.min;
+function expSt(i){if(!i.exp)return null;const d=daysTo(i.exp);return d<0?{c:"bg-org text-white",t:"منتهي الصلاحية",lv:2}:d<=7?{c:"bg-amber text-navy",t:d==0?"ينتهي اليوم":`ينتهي خلال ${d} أيام`,lv:1}:null}
+function chk(i,prev,place){if(low(i)&&!(prev!=null&&low({...i,q:prev})))log("warn",`${i.name} وصل للحد الأدنى في ${place} (المتبقي ${i.q})`)}
+const rented=id=>S.r.filter(r=>!r.done&&r.iid===id).reduce((a,r)=>a+r.q,0);
+function alerts(){const a=[];
+  S.k.forEach(i=>{const e=expSt(i);if(e)a.push({v:"kitchen",c:e.lv>1,m:`${i.name}: ${e.t} (المطبخ)`});if(low(i))a.push({v:"kitchen",c:i.q==0,m:`${i.name}: وصل للحد الأدنى، المتبقي ${i.q} (المطبخ)`})});
+  S.w.forEach(i=>{if(low(i))a.push({v:"wh",c:i.q==0,m:`${i.name}: قارب على النفاد، المتبقي ${i.q} (المستودع)`})});
+  return a}
+function dailyCheck(){let ch=false;S.k.forEach(i=>{const e=expSt(i);if(e&&i.ax!==day()){log(e.lv>1?"crit":"warn",`${i.name}: ${e.t}`);i.ax=day();ch=true}});return ch}
+
+/* ===== بيانات تجريبية ===== */
+function seed(){const n=Date.now(),H=36e5;return{
+k:[{id:"k1",name:"شاي أخضر",cat:"مشروب",loc:"الرف العلوي",q:12,exp:day(120),min:4},
+{id:"k2",name:"حليب طويل الأجل",cat:"مشروب",loc:"الثلاجة الرئيسية",q:6,exp:day(3),min:3},
+{id:"k3",name:"وجبات جاهزة",cat:"وجبة",loc:"الثلاجة الرئيسية",q:20,exp:day(45),min:5},
+{id:"k4",name:"سائل جلي",cat:"أداة تنظيف",loc:"تحت المغسلة",q:5,exp:"",min:2},
+{id:"k5",name:"أكواب ورقية",cat:"ورق",loc:"الرف السفلي",q:150,exp:"",min:50}],
+w:[{id:"w1",name:"أوراق A4",cat:"قرطاسية",loc:"رف B2",q:3,min:2,img:""},
+{id:"w2",name:"سماعة صوتية محمولة",cat:"صوتيات",loc:"خزانة الصوتيات",q:2,min:1,img:""},
+{id:"w3",name:"كراسي قابلة للطي",cat:"أثاث",loc:"المستودع الخلفي",q:40,min:10,img:""},
+{id:"w4",name:"جهاز عرض (بروجكتر)",cat:"أجهزة",loc:"خزانة الأجهزة",q:2,min:1,img:""},
+{id:"w5",name:"صندوق أدوات صيانة",cat:"أدوات صيانة",loc:"رف C1",q:4,min:1,img:""}],
+r:[{id:"r1",iid:"w2",q:1,who:"أحمد العتيبي",to:"مسجد الإمام الحسن",ret:day(4),at:n-26*H,done:false},
+{id:"r2",iid:"w3",q:20,who:"خالد الشهري",to:"قاعة الاحتفالات",ret:day(-1),at:n-72*H,done:false}],
+l:[{id:"l1",t:"warn",m:"حليب طويل الأجل: ينتهي خلال 3 أيام",at:n-1*H},
+{id:"l2",t:"rent",m:"تم استئجار 1 × سماعة صوتية محمولة بواسطة أحمد العتيبي إلى مسجد الإمام الحسن - الإرجاع في "+day(4),at:n-26*H},
+{id:"l3",t:"add",m:"تمت إضافة 3 × أوراق A4 إلى المستودع",at:n-48*H},
+{id:"l4",t:"rent",m:"تم استئجار 20 × كراسي قابلة للطي بواسطة خالد الشهري إلى قاعة الاحتفالات - الإرجاع في "+day(-1),at:n-72*H},
+{id:"l5",t:"add",m:"تمت إضافة 12 × شاي أخضر إلى المطبخ",at:n-96*H}]}}
+
+/* ===== واجهة مشتركة ===== */
+const ico=n=>`<i data-lucide="${n}" class="w-4 h-4"></i>`;
+const fl=(l,n,t="text",v="",x="")=>`<label class="block"><span class="text-sm font-bold">${l}</span><input name="${n}" type="${t}" value="${esc(v)}" ${x} class="inp mt-1"></label>`;
+const sl=(l,n,o,v)=>`<label class="block"><span class="text-sm font-bold">${l}</span><select name="${n}" class="inp mt-1">${o.map(c=>`<option value="${esc(c[0]??c)}" ${(c[0]??c)==v?"selected":""}>${esc(c[1]??c)}</option>`).join("")}</select></label>`;
+function modal(t,body,ok,btn="حفظ"){
+  const m=document.createElement("div");m.className="fixed inset-0 z-50 bg-navy/60 flex items-center justify-center p-3";
+  m.innerHTML=`<form class="card w-full max-w-md max-h-[92vh] overflow-auto p-5 space-y-3"><div class="flex justify-between items-center"><h3 class="font-extrabold text-lg">${t}</h3><button type="button" class="x" aria-label="إغلاق">${ico("x")}</button></div>${body}<p class="er text-org text-sm font-bold hidden"></p><div class="flex gap-2 pt-1"><button class="btn b1 flex-1">${btn}</button><button type="button" class="btn b3 x">إلغاء</button></div></form>`;
+  document.body.appendChild(m);lucide.createIcons();
+  m.querySelectorAll(".x").forEach(b=>b.onclick=()=>m.remove());
+  const f=m.querySelector("form");f.onsubmit=async e=>{e.preventDefault();const r=await ok(new FormData(f));if(r){const p=m.querySelector(".er");p.textContent=r;p.classList.remove("hidden")}else m.remove()};
+  const first=f.querySelector("input,select");if(first)first.focus()}
+const toB64=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,400/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);ok(c.toDataURL("image/jpeg",.75))};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(f)});
+const catIcon={"صوتيات":"speaker","قرطاسية":"file-text","أجهزة":"monitor","أثاث":"armchair","أدوات صيانة":"wrench"};
+const thumb=i=>i.img?`<img src="${esc(i.img)}" alt="" class="w-full h-full object-cover" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'text-sky text-xs font-bold',textContent:'تعذر تحميل الصورة'}))">`:`<i data-lucide="${catIcon[i.cat]||"package"}" class="w-10 h-10 text-ocean"></i>`;
+const empty=t=>`<div class="card p-8 text-center text-navy/60 font-bold col-span-full">${t}</div>`;
+
+/* ===== الصفحات ===== */
+function home(){
+  const al=alerts(),ar=S.r.filter(r=>!r.done).length;
+  const kp=[["soup","أصناف المطبخ",S.k.length,"bg-ocean"],["warehouse","أصناف المستودع",S.w.length,"bg-navy"],["handshake","الإيجارات النشطة",ar,"bg-org"],["bell-ring","التنبيهات النشطة",al.length,"bg-amber"]];
+  return `<div class="grid grid-cols-2 lg:grid-cols-4 gap-3">${kp.map(k=>`<div class="card p-4 flex items-center gap-3"><span class="${k[3]} ${k[3]=="bg-amber"?"text-navy":"text-white"} w-11 h-11 rounded-xl flex items-center justify-center"><i data-lucide="${k[0]}"></i></span><div><div class="text-2xl font-extrabold">${k[2]}</div><div class="text-xs font-bold text-navy/70">${k[1]}</div></div></div>`).join("")}</div>
+<div class="grid sm:grid-cols-2 gap-3 mt-4">
+<button data-a="go" data-id="kitchen" class="card p-5 text-start hover:border-ocean transition"><div class="flex items-center gap-3"><span class="bg-sky/50 text-ocean w-12 h-12 rounded-xl flex items-center justify-center"><i data-lucide="chef-hat"></i></span><div><div class="font-extrabold text-lg">إدارة المطبخ</div><div class="text-sm text-navy/70">المشروبات والوجبات والمستلزمات اليومية وتواريخ انتهائها.</div></div></div></button>
+<button data-a="go" data-id="wh" class="card p-5 text-start hover:border-ocean transition"><div class="flex items-center gap-3"><span class="bg-navy text-white w-12 h-12 rounded-xl flex items-center justify-center"><i data-lucide="package-open"></i></span><div><div class="font-extrabold text-lg">إدارة المستودع</div><div class="text-sm text-navy/70">المعدات والأدوات، مع الاستئجار والإرجاع وتنبيهات النقص.</div></div></div></button></div>
+<section class="mt-6"><h2 class="font-extrabold text-lg mb-2 flex items-center gap-2">${ico("bell-ring")}التنبيهات النشطة</h2>
+<div class="space-y-2">${al.length?al.map(a=>`<button data-a="go" data-id="${a.v}" class="w-full text-start rounded-xl px-4 py-3 text-sm font-bold flex items-center gap-2 ${a.c?"bg-org text-white":"bg-amber/30 border border-amber"}">${ico(a.c?"siren":"triangle-alert")}${esc(a.m)}</button>`).join(""):`<div class="card p-4 text-sm font-bold text-navy/60">لا توجد تنبيهات حاليًا، كل الأصناف ضمن الحدود الآمنة.</div>`}</div></section>
+<section class="mt-6"><h2 class="font-extrabold text-lg mb-2 flex items-center gap-2">${ico("history")}سجل الإشعارات</h2>
+<div class="card divide-y divide-sky/40 max-h-[28rem] overflow-auto">${S.l.length?S.l.map(l=>{const t=LT[l.t]||LT.add;return `<div class="flex items-start gap-3 p-3"><span class="${t[1]} ${t[1]=="bg-amber"||t[1]=="bg-sky"?"text-navy":"text-white"} w-8 h-8 shrink-0 rounded-lg flex items-center justify-center"><i data-lucide="${t[0]}" class="w-4 h-4"></i></span><div class="min-w-0"><div class="text-sm font-bold">${esc(l.m)}</div><div class="text-xs text-navy/60">${fmt(l.at)}</div></div></div>`}).join(""):`<div class="p-6 text-center text-sm text-navy/60 font-bold">لا توجد عمليات بعد.</div>`}</div></section>`}
+
+function bar(cats,cur,fa,addBtns){
+  return `<div class="flex flex-wrap items-center gap-2">${addBtns}<div class="relative flex-1 min-w-[12rem]"><input id="s" value="${esc(q)}" placeholder="ابحث بالاسم أو الموقع..." class="inp ps-9"><span class="absolute start-3 top-2.5 text-ocean">${ico("search")}</span></div></div>
+<div class="flex gap-2 overflow-x-auto py-3">${["الكل",...cats].map(c=>`<button data-a="${fa}" data-id="${esc(c)}" class="pill ${c==cur?"on":""}">${c}</button>`).join("")}</div>`}
+const match=(i,c)=>(c=="الكل"||i.cat==c)&&(!q||(i.name+" "+i.loc).includes(q));
+
+function kitchen(){return bar(KC,kc,"kc",`<button class="btn b1" data-a="kadd">${ico("plus")}إضافة عنصر</button>`)+`<div id="lst" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>`}
+function klist(){const L=S.k.filter(i=>match(i,kc));$("#lst").innerHTML=L.length?L.map(i=>{const e=expSt(i),lw=low(i);return `<div class="card p-4 space-y-2 ${e||lw?"border-amber border-2":""}">
+<div class="flex justify-between gap-2"><h3 class="font-extrabold">${esc(i.name)}</h3><span class="bdg bg-sky/50">${esc(i.cat)}</span></div>
+<div class="text-sm text-navy/70 flex items-center gap-1">${ico("map-pin")}${esc(i.loc)||"بدون موقع"}</div>
+<div><span class="text-2xl font-extrabold">${i.q}</span><span class="text-xs text-navy/60"> متوفر${hasMin(i)?` · الحد الأدنى ${i.min}`:""}</span></div>
+<div class="flex flex-wrap gap-1">${i.exp?`<span class="bdg ${e?e.c:"bg-sky/40"}">${e?e.t:"ينتهي "+i.exp}</span>`:""}${lw?`<span class="bdg bg-amber text-navy">وصل للحد الأدنى</span>`:""}</div>
+<div class="flex gap-2 pt-1"><button class="btn bd flex-1" data-a="kout" data-id="${i.id}">${ico("minus")}سحب كمية</button><button class="btn b3" data-a="kedit" data-id="${i.id}" aria-label="تعديل">${ico("pencil")}</button><button class="btn b3 text-org" data-a="kdel" data-id="${i.id}" aria-label="حذف">${ico("trash-2")}</button></div></div>`}).join(""):empty("لا توجد عناصر مطابقة. أضف عنصرًا جديدًا من الزر أعلاه.");lucide.createIcons()}
+function kform(i){
+  modal(i?"تعديل عنصر":"إضافة عنصر",fl("اسم العنصر","name","text",i?.name,"required")+sl("نوع العنصر","cat",KC,i?.cat)+fl("موقعه","loc","text",i?.loc)+fl("الكمية","q","number",i?.q,'required min="0"')+fl("الحد الأدنى للتنبيه (اختياري)","min","number",i?.min,'min="0"')+fl("تاريخ الانتهاء (إن وجد)","exp","date",i?.exp),async d=>{
+    const n=d.get("name").trim(),qt=d.get("q");if(!n)return"اسم العنصر مطلوب.";if(qt===""||+qt<0)return"أدخل كمية صحيحة.";
+    const o={name:n,cat:d.get("cat"),loc:d.get("loc").trim(),q:+qt,exp:d.get("exp"),min:d.get("min")===""?"":+d.get("min")};
+    if(i){const p=i.q;Object.assign(i,o,{ax:""});log("edit",`تم تعديل ${n} في المطبخ`);chk(i,p,"المطبخ")}
+    else{const it={id:uid(),...o};S.k.unshift(it);log("add",`تمت إضافة ${o.q} × ${n} إلى المطبخ`);chk(it,null,"المطبخ")}
+    dailyCheck();await commit()})}
+function kout(i){modal("سحب كمية من "+esc(i.name),fl(`الكمية المسحوبة (المتوفر ${i.q})`,"n","number","1",`required min="1" max="${i.q}"`),async d=>{
+  const n=+d.get("n");if(!(n>=1))return"أدخل كمية صحيحة.";if(n>i.q)return`المتوفر ${i.q} فقط.`;
+  const p=i.q;i.q-=n;log("out",`تم سحب ${n} × ${i.name} من المطبخ (المتبقي ${i.q})`);chk(i,p,"المطبخ");await commit()},"سحب")}
+
+function wh(){
+  const rs=S.r.filter(r=>!r.done);
+  return bar(WC,wc,"wc",`<button class="btn b1" data-a="wadd">${ico("plus")}إضافة عنصر</button><button class="btn b2" data-a="rent">${ico("handshake")}استئجار عنصر</button>`)+`<div id="lst" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+<section class="mt-8"><h2 class="font-extrabold text-lg mb-2 flex items-center gap-2">${ico("clipboard-list")}العناصر المستأجرة حالياً</h2>
+<div class="space-y-2">${rs.length?rs.map(r=>{const it=S.w.find(x=>x.id===r.iid)||{name:"عنصر محذوف",cat:""},od=daysTo(r.ret)<0;return `<div class="card p-3 flex flex-wrap items-center gap-3 ${od?"border-org border-2":""}">
+<div class="w-14 h-14 rounded-xl bg-sky/30 flex items-center justify-center overflow-hidden shrink-0">${thumb(it)}</div>
+<div class="flex-1 min-w-[10rem]"><div class="font-extrabold">${esc(it.name)} <span class="text-ocean">× ${r.q}</span></div><div class="text-sm text-navy/70">المستأجر: ${esc(r.who)} · الموقع: ${esc(r.to)}</div></div>
+<div class="text-sm font-bold ${od?"text-org":""}">${od?`متأخر ${-daysTo(r.ret)} يوم · `:""}الإرجاع: ${r.ret}</div>
+<button class="btn b1" data-a="ret" data-id="${r.id}">${ico("undo-2")}تأكيد الإرجاع</button></div>`}).join(""):`<div class="card p-5 text-sm font-bold text-navy/60">لا توجد عناصر مستأجرة حاليًا.</div>`}</div></section>`}
+function wlist(){const L=S.w.filter(i=>match(i,wc));$("#lst").innerHTML=L.length?L.map(i=>{const lw=low(i),rt=rented(i.id);return `<div class="card overflow-hidden ${lw?"border-2 "+(i.q==0?"border-org":"border-amber"):""}">
+<div class="h-32 bg-sky/30 flex items-center justify-center overflow-hidden">${thumb(i)}</div>
+<div class="p-4 space-y-2"><div class="flex justify-between gap-2"><h3 class="font-extrabold">${esc(i.name)}</h3><span class="bdg bg-sky/50">${esc(i.cat)}</span></div>
+<div class="text-sm text-navy/70 flex items-center gap-1">${ico("map-pin")}${esc(i.loc)||"بدون موقع"}</div>
+<div><span class="text-2xl font-extrabold">${i.q}</span><span class="text-xs text-navy/60"> متاح · الحد الأدنى ${hasMin(i)?i.min:"—"}${rt?` · مؤجّر ${rt}`:""}</span></div>
+${lw?`<span class="bdg ${i.q==0?"bg-org text-white":"bg-amber text-navy"}">${i.q==0?"نفد المخزون":"قارب على النفاد / وصل للحد الأدنى"}</span>`:""}
+<div class="flex gap-2 pt-1"><button class="btn b3 flex-1" data-a="wedit" data-id="${i.id}">${ico("pencil")}تعديل</button><button class="btn b3 text-org" data-a="wdel" data-id="${i.id}" aria-label="حذف">${ico("trash-2")}</button></div></div></div>`}).join(""):empty("لا توجد عناصر مطابقة. أضف عنصرًا جديدًا من الزر أعلاه.");lucide.createIcons()}
+function wform(i){
+  modal(i?"تعديل عنصر":"إضافة عنصر",fl("اسم العنصر","name","text",i?.name,"required")+sl("نوع العنصر","cat",WC,i?.cat)+fl("موقعه","loc","text",i?.loc)+fl("الكمية","q","number",i?.q,'required min="0"')+fl("الحد الأدنى للتنبيه","min","number",i?.min??1,'required min="0"')+fl("رابط الصورة","img","url",i?.img&&!i.img.startsWith("data:")?i.img:"")+`<label class="block"><span class="text-sm font-bold">أو ارفع صورة من جهازك</span><input name="file" type="file" accept="image/*" class="inp mt-1"></label>`,async d=>{
+    const n=d.get("name").trim(),qt=d.get("q"),mn=d.get("min");if(!n)return"اسم العنصر مطلوب.";if(qt===""||+qt<0)return"أدخل كمية صحيحة.";if(mn===""||+mn<0)return"أدخل الحد الأدنى للتنبيه.";
+    let img=d.get("img").trim()||(i?.img||"");const f=d.get("file");
+    if(f&&f.size){try{img=await toB64(f)}catch(e){return"تعذر قراءة الصورة، جرّب ملفًا آخر."}}
+    else if(d.get("img").trim()==="")img=i&&i.img.startsWith("data:")?i.img:"";
+    const o={name:n,cat:d.get("cat"),loc:d.get("loc").trim(),q:+qt,min:+mn,img};
+    if(i){const p=i.q;Object.assign(i,o);log("edit",`تم تعديل ${n} في المستودع`);chk(i,p,"المستودع")}
+    else{const it={id:uid(),...o};S.w.unshift(it);log("add",`تمت إضافة ${o.q} × ${n} إلى المستودع`);chk(it,null,"المستودع")}
+    await commit()})}
+function rentForm(){
+  const av=S.w.filter(i=>i.q>0);if(!av.length)return toast("لا توجد عناصر متاحة للاستئجار.");
+  modal("استئجار عنصر",sl("العنصر المستأجر","iid",av.map(i=>[i.id,`${i.name} (متاح ${i.q})`]),av[0].id)+fl("الكمية","n","number","1",'required min="1"')+fl("اسم المستأجر","who","text","","required")+fl("الموقع / الجهة المستفيدة","to","text","","required")+fl("تاريخ الإرجاع","ret","date","",`required min="${day()}"`),async d=>{
+    const it=S.w.find(x=>x.id===d.get("iid")),n=+d.get("n"),who=d.get("who").trim(),to=d.get("to").trim(),ret=d.get("ret");
+    if(!it)return"اختر عنصرًا.";if(!(n>=1))return"أدخل كمية صحيحة.";if(n>it.q)return`المتاح ${it.q} فقط.`;if(!who||!to)return"اسم المستأجر والموقع مطلوبان.";if(!ret||ret<day())return"تاريخ الإرجاع لا يمكن أن يكون قبل اليوم.";
+    const p=it.q;it.q-=n;S.r.unshift({id:uid(),iid:it.id,q:n,who,to,ret,at:Date.now(),done:false});
+    log("rent",`تم استئجار ${n} × ${it.name} بواسطة ${who} إلى ${to} - الإرجاع في ${ret}`);chk(it,p,"المستودع");await commit()},"تأكيد الاستئجار")}
+
+/* ===== العرض والأحداث ===== */
+function render(){
+  $("#nav").innerHTML=[["home","الرئيسية"],["kitchen","إدارة المطبخ"],["wh","إدارة المستودع"]].map(t=>`<button data-a="go" data-id="${t[0]}" class="tab ${view==t[0]?"on":""}">${t[1]}</button>`).join("");
+  $("#app").innerHTML=view=="home"?home():view=="kitchen"?kitchen():wh();
+  if(view=="kitchen")klist();if(view=="wh")wlist();lucide.createIcons()}
+const A={
+  go:id=>{view=id;q="";render();scrollTo(0,0)},kc:id=>{kc=id;render()},wc:id=>{wc=id;render()},
+  link:()=>MAIN_SYSTEM_URL?window.open(MAIN_SYSTEM_URL,"_blank","noopener"):toast("حدّد رابط النظام في الثابت MAIN_SYSTEM_URL أعلى الكود."),
+  kadd:()=>kform(),kedit:id=>kform(S.k.find(x=>x.id===id)),kout:id=>kout(S.k.find(x=>x.id===id)),
+  kdel:async id=>{const i=S.k.find(x=>x.id===id);if(!confirm(`حذف "${i.name}" نهائيًا؟`))return;S.k=S.k.filter(x=>x.id!==id);log("del",`تم حذف ${i.name} من المطبخ`);await commit()},
+  wadd:()=>wform(),wedit:id=>wform(S.w.find(x=>x.id===id)),rent:()=>rentForm(),
+  wdel:async id=>{const i=S.w.find(x=>x.id===id);if(S.r.some(r=>!r.done&&r.iid===id))return toast("لا يمكن حذف عنصر عليه إيجار نشط. أكّد إرجاعه أولًا.");if(!confirm(`حذف "${i.name}" نهائيًا؟`))return;S.w=S.w.filter(x=>x.id!==id);log("del",`تم حذف ${i.name} من المستودع`);await commit()},
+  ret:async id=>{const r=S.r.find(x=>x.id===id),it=S.w.find(x=>x.id===r.iid);if(it)it.q+=r.q;r.done=true;r.doneAt=Date.now();log("ret",`تم إرجاع ${r.q} × ${it?it.name:"عنصر"} من ${r.who} (${r.to})`);await commit()},
+  exp:()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}));a.download=`hq-backup-${day()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1e3)},
+  imp:()=>$("#fi").click()};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset.id)});
+document.addEventListener("input",e=>{if(e.target.id==="s"){q=e.target.value.trim();view=="kitchen"?klist():wlist()}});
+$("#fi").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const o=JSON.parse(r.result);if(!["k","w","r","l"].every(k=>Array.isArray(o[k])))throw 0;if(!confirm("سيستبدل الاستيراد كل البيانات الحالية. متابعة؟"))return;S=o;await commit();toast("تم استيراد النسخة الاحتياطية.")}catch(x){toast("الملف غير صالح: اختر نسخة صدّرتها من هذا النظام.")}e.target.value=""};r.readAsText(f)};
+
+(async()=>{S=await Store.load();if(!S||!Array.isArray(S.k)){S=seed();dailyCheck();await Store.save(S)}else if(dailyCheck())await Store.save(S);render()})();
+</script>
+</body>
+</html>
