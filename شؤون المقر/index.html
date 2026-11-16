@@ -42,7 +42,7 @@ body{@apply bg-[#F8FAFC] text-navy font-sans}
 </footer>
 <div id="toast" class="fixed bottom-4 inset-x-4 mx-auto max-w-sm bg-navy text-white text-sm font-bold rounded-xl px-4 py-3 text-center hidden z-[60]"></div>
 <script>
-/* ===== الإعدادات: اربط نظام دار القرآن وSupabase هنا ===== */
+/* ===== الإعدادات ===== */
 const MAIN_SYSTEM_URL="https://mohammedainme321-amano.github.io/whay/";
 const SUPABASE_URL="https://copvxmmfifdjdqsotxrc.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_C9SD2WS5j3ch2mcwTRmPBQ_jyGFxKWx";
@@ -52,48 +52,37 @@ const KEY="hq_affairs_v1";
 const Store={
   async load(){
     try{
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/hq_system_state?id=eq.${KEY}&select=data`, {
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-        }
+      const res=await fetch(`${SUPABASE_URL}/rest/v1/hq_system_state?id=eq.${KEY}&select=data`,{
+        headers:{"apikey":SUPABASE_ANON_KEY,"Authorization":`Bearer ${SUPABASE_ANON_KEY}`}
       });
       if(res.ok){
-        const rows = await res.json();
-        if(rows.length > 0 && rows[0].data) return rows[0].data;
+        const rows=await res.json();
+        if(rows.length>0&&rows[0].data)return rows[0].data;
       }
-    }catch(e){ console.error("Supabase Load Error:", e); }
-    try{ return JSON.parse(localStorage.getItem(KEY)); }catch(e){ return null; }
+    }catch(e){console.error(e)}
+    try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}
   },
   async save(s){
-    try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+    try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}
     try{
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/hq_system_state?on_conflict=id`, {
-        method: "POST",
-        headers: {
-          "apikey": SUPABASE_ANON_KEY,
-          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-          "Content-Type": "application/json",
-          "Prefer": "resolution=merge-duplicates"
+      const res=await fetch(`${SUPABASE_URL}/rest/v1/hq_system_state?on_conflict=id`,{
+        method:"POST",
+        headers:{
+          "apikey":SUPABASE_ANON_KEY,
+          "Authorization":`Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type":"application/json",
+          "Prefer":"resolution=merge-duplicates"
         },
-        body: JSON.stringify({ id: KEY, data: s, updated_at: new Date().toISOString() })
+        body:JSON.stringify({id:KEY,data:s,updated_at:new Date().toISOString()})
       });
       if(!res.ok){
-        const err = await res.text();
-        alert("خطأ من Supabase: " + err);
+        const err=await res.text();
+        alert("خطأ من Supabase: "+err);
         return false;
       }
       return true;
     }catch(e){
-      alert("خطأ في الاتصال: " + e.message);
-      return false;
-    }
-  }
-        body: JSON.stringify({ id: KEY, data: s, updated_at: new Date().toISOString() })
-      });
-      return res.ok;
-    }catch(e){
-      console.error("Supabase Save Error:", e);
+      alert("خطأ في الاتصال: "+e.message);
       return false;
     }
   }
@@ -111,7 +100,7 @@ const LT={add:["circle-plus","bg-ocean"],out:["circle-minus","bg-amber"],del:["t
 let S,view="home",q="",kc="الكل",wc="الكل";
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.remove("hidden");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add("hidden"),3500)}
 function log(t,m){S.l.unshift({id:uid(),t,m,at:Date.now()});S.l.length=Math.min(S.l.length,200)}
-async function commit(){if(!await Store.save(S))toast("تعذر الحفظ: مساحة التخزين ممتلئة. صدّر نسخة وقلّل حجم الصور.");render()}
+async function commit(){if(!await Store.save(S))toast("تعذر الحفظ في السحابة.");render()}
 
 /* ===== منطق الحالة ===== */
 const hasMin=i=>i.min!==""&&i.min!=null,low=i=>hasMin(i)&&i.q<=+i.min;
