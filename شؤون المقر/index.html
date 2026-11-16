@@ -35,7 +35,7 @@ body{@apply bg-[#F8FAFC] text-navy font-sans}
 </header>
 <main id="app" class="max-w-6xl mx-auto px-4 py-6"></main>
 <footer class="max-w-6xl mx-auto px-4 pb-8 flex flex-wrap items-center gap-2 text-xs text-navy/60">
-<span class="flex-1">تُحفظ البيانات في متصفح هذا الجهاز.</span>
+<span class="flex-1"></span>
 <button class="btn b3" data-a="exp"><i data-lucide="download" class="w-4 h-4"></i>تصدير نسخة احتياطية</button>
 <button class="btn b3" data-a="imp"><i data-lucide="upload" class="w-4 h-4"></i>استيراد نسخة</button>
 <input type="file" id="fi" accept="application/json" class="hidden">
@@ -43,14 +43,47 @@ body{@apply bg-[#F8FAFC] text-navy font-sans}
 <div id="toast" class="fixed bottom-4 inset-x-4 mx-auto max-w-sm bg-navy text-white text-sm font-bold rounded-xl px-4 py-3 text-center hidden z-[60]"></div>
 <script>
 /* ===== الإعدادات: اربط نظام دار القرآن وSupabase هنا ===== */
-const MAIN_SYSTEM_URL="https://mohammedainme321-amano.github.io/whay/";            // رابط نظام الإدارة العامة لدار القرآن
-const SUPABASE_URL="",SUPABASE_ANON_KEY=""; // للربط لاحقًا بقاعدة Supabase المشتركة
+const MAIN_SYSTEM_URL="https://mohammedainme321-amano.github.io/whay/";
+const SUPABASE_URL="https://copvxmmfifdjdqsotxrc.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_C9SD2WS5j3ch2mcwTRmPBQ_jyGFxKWx";
 const KEY="hq_affairs_v1";
 
-/* ===== طبقة التخزين (async لتسهل الاستبدال بـ Supabase) ===== */
+/* ===== طبقة التخزين السحابية عبر Supabase ===== */
 const Store={
-  async load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}},
-  async save(s){try{localStorage.setItem(KEY,JSON.stringify(s));return true}catch(e){return false}}
+  async load(){
+    try{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/hq_system_state?id=eq.${KEY}&select=data`, {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      if(res.ok){
+        const rows = await res.json();
+        if(rows.length > 0 && rows[0].data) return rows[0].data;
+      }
+    }catch(e){ console.error("Supabase Load Error:", e); }
+    try{ return JSON.parse(localStorage.getItem(KEY)); }catch(e){ return null; }
+  },
+  async save(s){
+    try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+    try{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/hq_system_state`, {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "resolution=merge-duplicates"
+        },
+        body: JSON.stringify({ id: KEY, data: s, updated_at: new Date().toISOString() })
+      });
+      return res.ok;
+    }catch(e){
+      console.error("Supabase Save Error:", e);
+      return false;
+    }
+  }
 };
 
 /* ===== أدوات ===== */
