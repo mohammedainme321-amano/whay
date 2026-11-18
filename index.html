@@ -21,36 +21,28 @@ button{cursor:pointer}
 .top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;max-width:1040px;margin:0 auto;padding:1.4rem 1rem .5rem}
 .ttl{text-align:center}
 .ttl h1{margin:0;font-size:clamp(2.2rem,6vw,3.2rem);font-weight:800;color:var(--sky-d)}
-.ttl p{margin:0;color:var(--sky);direction:ltr}
+.ttl .ar-date{margin:.25rem 0 0;color:var(--sky-d);font-weight:700;font-size:.95rem;background:rgba(255,255,255,.8);display:inline-block;padding:.15rem .9rem;border-radius:99px;border:1px solid var(--ln)}
 .ub{display:flex;align-items:center;gap:.7rem;justify-self:start;flex-wrap:wrap}
 .em{color:var(--mu);font-size:.9rem;direction:ltr;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mode{background:var(--sky-l);color:var(--sky-d);border-radius:99px;padding:0 .8rem;font-size:.85rem;font-weight:700;white-space:nowrap}
-.btn{display:inline-block;text-decoration:none;background:var(--sf);border:1.5px solid var(--ln);border-radius:12px;padding:.45rem 1rem;font-weight:700;color:var(--sky)}
+.btn{display:inline-flex;align-items:center;gap:.35rem;text-decoration:none;background:var(--sf);border:1.5px solid var(--ln);border-radius:12px;padding:.45rem 1rem;font-weight:700;color:var(--sky)}
 .btn:hover{background:var(--sky-l)}
-.btn.sm{padding:.1rem .85rem;font-size:.9rem;white-space:nowrap}
+.btn.sm{padding:.25rem .75rem;font-size:.88rem;white-space:nowrap}
 .btn.red{color:var(--rd);border-color:var(--rl)}.btn.red:hover{background:var(--rb)}
+.btn.wa{color:#15803d;border-color:#86efac;background:#f0fdf4}.btn.wa:hover{background:#dcfce7}
 .tabs{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1.5px solid var(--ln);box-shadow:0 4px 14px rgba(2,132,199,.08)}
 .tabs div{max-width:1040px;margin:0 auto;padding:.5rem 1rem;display:flex;gap:.5rem;overflow-x:auto;justify-content:center}
 .tab{flex:none;background:none;border:1.5px solid transparent;border-radius:12px;padding:.5rem 1.1rem;font-weight:700;color:var(--sky-d);white-space:nowrap}
 .tab:hover{background:var(--sky-l)}
 .tab.on{background:var(--sky);color:#fff;border-color:var(--sky)}
 main{max-width:1040px;margin:0 auto;padding:1.2rem 1rem 3rem}
-.js [data-sec]{display:none}
-.js [data-sec].on{display:block;animation:pin .25s ease}
-@keyframes pin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 [data-sec]{margin-bottom:2.4rem}
 
 /* common */
-.head{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:0 0 1rem}
-.head h2,.head h3{margin:0;flex:1;color:var(--sky-d)}
-.head h2{font-size:1.5rem}.head h3{font-size:1.2rem}
-.stamp{color:var(--mu);font-size:.85rem}
-.conn{border-radius:99px;padding:0 .8rem;font-size:.85rem;font-weight:700;background:var(--sky-l);color:var(--sky-d)}
-.conn.bad{background:var(--rb);color:var(--rd)}.conn.good{background:#dcf5e6;color:#17663a}
 .err{background:var(--rb);color:var(--rd);border:1.5px solid var(--rl);border-radius:12px;padding:.6rem .9rem;margin-bottom:1rem;font-weight:500}
 .count{min-width:2rem;height:2rem;border-radius:99px;background:var(--rd);color:#fff;font-weight:700;display:grid;place-items:center;padding:0 .6rem}
 .count.ok{background:#2e9e5b}.count.info{background:var(--sky)}
-.pill{display:inline-block;border-radius:99px;padding:0 .8rem;font-weight:700;font-size:.9rem;white-space:nowrap}
+.pill{display:inline-block;border-radius:99px;padding:0 .8rem;font-weight:700;font-size:.9rem;white-space:nowrap;margin-inline-end:.4rem}
 .pill.late{background:var(--rb);color:var(--rd);border:1px solid var(--rl)}
 .pill.warn{background:#fff4d6;color:#8a5200;border:1px solid #f0cf85}
 .pill.ok{background:#dcf5e6;color:#17663a;border:1px solid #9ad8b3}
@@ -58,9 +50,8 @@ main{max-width:1040px;margin:0 auto;padding:1.2rem 1rem 3rem}
 
 /* dashboard */
 .stats{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-bottom:1.4rem}
-a.stat,div.stat{display:block;text-decoration:none;color:inherit;background:var(--sf);border:1.5px solid var(--ln);border-radius:18px;padding:1rem 1.2rem;box-shadow:var(--sh);transition:transform .2s,border-color .2s}
-a.stat:hover{transform:translateY(-3px);border-color:var(--sky)}
-a.stat.bad{border-color:var(--rl);background:var(--rb)}
+div.stat{display:block;text-decoration:none;color:inherit;background:var(--sf);border:1.5px solid var(--ln);border-radius:18px;padding:1rem 1.2rem;box-shadow:var(--sh)}
+div.stat.bad{border-color:var(--rl);background:var(--rb)}
 .stat span{display:block;color:var(--mu);font-weight:500}
 .stat strong{font-size:2.4rem;font-weight:800;color:var(--sky-d);line-height:1.3}
 .stat.bad strong{color:var(--rd)}
@@ -77,8 +68,6 @@ a.stat.bad{border-color:var(--rl);background:var(--rb)}
 .list li:first-child{border-top:0}
 .list li.go{cursor:pointer}.list li.go:hover{background:var(--rb)}
 .list .dot{width:.8rem;height:.8rem;border-radius:50%;background:var(--rd);flex:none}
-.list .tx{flex:1;min-width:0}
-.list small{display:block;color:var(--mu)}.list small.rs{color:var(--tx)}
 .list .none{justify-content:center;color:var(--mu);cursor:default}
 .hubt{text-align:center;margin:2rem 0 1.2rem;font-size:1.3rem;color:var(--sky-d)}
 .hub{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
@@ -90,54 +79,30 @@ a.stat.bad{border-color:var(--rl);background:var(--rb)}
 .portal p{margin:0;color:var(--mu);font-size:.95rem}
 
 /* forms + tables */
-.form{background:var(--sf);border:1.5px solid var(--ln);border-radius:18px;padding:1.2rem;box-shadow:var(--sh);margin-bottom:1.4rem;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-items:end}
 .field{display:grid;gap:.3rem;font-weight:500}
 .full{grid-column:1/-1}
 .field input,.field select,.field textarea{padding:.7rem .9rem;border:1.5px solid var(--ln);border-radius:12px;background:#fff;color:var(--tx);width:100%}
 .field textarea{min-height:90px;resize:vertical}
 .field input[type=email]{direction:ltr;text-align:right}
-.acts{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
 .primary{background:var(--sky);color:#fff;border:0;border-radius:12px;padding:.7rem 1.6rem;font-weight:700;font-size:1.05rem}
 .primary:hover{background:var(--sky-d)}.primary:disabled{opacity:.6;cursor:not-allowed}
-.note{background:var(--sky-l);color:var(--sky-d);border-radius:12px;padding:.7rem 1rem;font-weight:500}
-.note.bad{background:var(--rb);color:var(--rd)}
-.tw{overflow-x:auto;background:var(--sf);border:1.5px solid var(--ln);border-radius:18px;box-shadow:var(--sh);margin-bottom:1.6rem}
-table{width:100%;border-collapse:collapse;min-width:760px}
-th,td{padding:.7rem .9rem;text-align:start;border-bottom:1px solid var(--ln)}
-th{background:var(--sky-l);white-space:nowrap}
-td.w{white-space:normal;min-width:200px}td.nw{white-space:nowrap}
-td.none{text-align:center;color:var(--mu);padding:1.2rem}
-tr.late td{background:var(--rb)}tr.warn td{background:#fffaf0}
-tr.focus td{box-shadow:inset 0 3px 0 var(--sky),inset 0 -3px 0 var(--sky)}
-.mini{display:flex;align-items:center;gap:.4rem;min-width:190px}
-.mini .bar{flex:1;height:.6rem;margin:0}.mini b{min-width:2.8rem;text-align:center}
-.step{width:1.8rem;height:1.8rem;border-radius:50%;border:1.5px solid var(--sky);background:#fff;color:var(--sky);font-size:1.1rem;font-weight:700;line-height:1;padding:0}
-.step:hover{background:var(--sky);color:#fff}
-.focuscard{background:var(--sf);border:2px solid var(--rl);border-radius:18px;box-shadow:var(--sh);padding:1.2rem;margin-bottom:1.2rem}
-.focuscard h3{margin:0 0 .8rem;color:var(--rd)}
-.focuscard dl{display:grid;grid-template-columns:auto 1fr;gap:.4rem 1rem;margin:0 0 .8rem}
-.focuscard dt{color:var(--mu)}.focuscard dd{margin:0;font-weight:700}
 
 /* setup panel */
-details.setup{background:var(--sf);border:1.5px solid var(--ln);border-radius:18px;box-shadow:var(--sh);padding:.8rem 1.2rem}
+details.setup{background:var(--sf);border:1.5px solid var(--ln);border-radius:18px;box-shadow:var(--sh);padding:.8rem 1.2rem;margin-top:2rem}
 details.setup summary{cursor:pointer;font-weight:700;color:var(--sky-d)}
-details.setup ol{margin:.8rem 0;padding-inline-start:1.4rem}
 pre.sql{direction:ltr;text-align:left;background:#0c2a3f;color:#e0f2fe;border-radius:12px;padding:1rem;overflow:auto;max-height:340px;font-size:.8rem;line-height:1.5;margin:.6rem 0}
-.diag{list-style:none;margin:.6rem 0;padding:0}.diag li{padding:.2rem 0}
 
-/* login modal */
-.modal{position:fixed;inset:0;background:rgba(7,40,60,.55);display:grid;place-items:center;padding:1.2rem;z-index:50;overflow:auto}
-.lc{width:100%;max-width:420px;max-height:100%;overflow:auto;background:var(--sf);border:1.5px solid var(--ln);border-radius:22px;box-shadow:var(--sh);padding:1.8rem 1.6rem}
+/* login + report modal */
+.modal{position:fixed;inset:0;background:rgba(7,40,60,.55);display:grid;place-items:center;padding:1rem;z-index:50;overflow:auto}
+.lc{width:100%;max-width:420px;max-height:95vh;overflow:auto;background:var(--sf);border:1.5px solid var(--ln);border-radius:22px;box-shadow:var(--sh);padding:1.8rem 1.6rem}
+.lc.wide{max-width:900px;padding:1.6rem}
 .lc .brand{text-align:center;margin-bottom:1rem}
-.lc .brand h2{margin:0;font-size:2.2rem;font-weight:800;color:var(--sky-d)}
-.lc .brand p{margin:0;color:var(--sky);direction:ltr}
+.lc .brand h2{margin:0;font-size:1.8rem;font-weight:800;color:var(--sky-d)}
 .lc .field{margin-bottom:1rem}.lc .primary{width:100%}
-.guard{display:flex;gap:.7rem;align-items:flex-start;background:var(--rb);color:var(--rd);border:1.5px solid var(--rl);border-radius:14px;padding:.8rem 1rem;margin-bottom:1.1rem;font-weight:700}
 .cancel{display:block;width:100%;margin-top:.6rem;background:none;border:0;color:var(--mu);padding:.5rem}
 .cancel:hover{color:var(--sky-d);text-decoration:underline}
 .hint{margin:1rem 0 0;text-align:center;color:var(--mu);font-size:.9rem}
 .toast{position:fixed;bottom:1.2rem;inset-inline:0;margin-inline:auto;width:max-content;max-width:90%;background:var(--sky-d);color:#fff;border-radius:12px;padding:.7rem 1.2rem;box-shadow:var(--sh);z-index:60}
-.ver{text-align:center;color:var(--mu);font-size:.8rem}
 @media (max-width:640px){.top{grid-template-columns:1fr;text-align:center}.ub{justify-self:center}.list li{flex-wrap:wrap}.tabs div{justify-content:flex-start}}
 
 /* workspace additions */
@@ -148,7 +113,7 @@ pre.sql{direction:ltr;text-align:left;background:#0c2a3f;color:#e0f2fe;border-ra
 .verse{justify-self:end;font-family:Amiri,"Traditional Arabic",serif;font-size:1.15rem;font-weight:700;color:var(--sky-d);background:var(--sky-l);border:1.5px solid var(--ln);border-radius:12px;padding:.35rem .9rem;white-space:nowrap}
 @media (max-width:720px){.verse{justify-self:center}}
 #app h2{color:var(--sky-d);font-size:1.5rem;margin:.2rem 0 1rem}
-.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .card{background:var(--sf);border:1.5px solid var(--ln);border-radius:18px;box-shadow:var(--sh);padding:1rem 1.2rem;margin-bottom:1.2rem}
 .card h3,.card h4{margin:.2rem 0;color:var(--sky-d)}
 .card form{display:grid;gap:.9rem}.card form>.btn,.card form>button{justify-self:start}
@@ -159,23 +124,43 @@ pre.sql{direction:ltr;text-align:left;background:#0c2a3f;color:#e0f2fe;border-ra
 .st a{flex:none;text-decoration:none;font-weight:700;color:var(--sky-d);background:var(--sky-l);border-radius:12px;padding:.5rem 1.1rem;white-space:nowrap}
 .st a.on{background:var(--sky);color:#fff}
 a.tab{text-decoration:none;display:inline-block}
+.btn-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+
+/* Word report template table styling inside modal */
+.w-doc{border:2px solid #075985;border-radius:12px;overflow:hidden;background:#fff;margin-bottom:1rem}
+.w-head{background:#e0f2fe;padding:.9rem 1rem;text-align:center;border-bottom:2px solid #075985}
+.w-head h3{margin:0;color:#075985;font-size:1.25rem}
+.w-head p{margin:.2rem 0 0;color:#0284c7;font-weight:700;font-size:.9rem}
+.w-sec-t{background:#075985;color:#fff;padding:.45rem .9rem;font-weight:700;font-size:1rem}
+.w-tbl{width:100%;border-collapse:collapse}
+.w-tbl th,.w-tbl td{border:1px solid #bae0f5;padding:.45rem .6rem;text-align:start;vertical-align:middle}
+.w-tbl th{background:#f0f9ff;color:#075985;font-weight:700;white-space:nowrap}
+.w-tbl input,.w-tbl select,.w-tbl textarea{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:.4rem .6rem;background:#fff;font-size:.92rem}
+.w-tbl textarea{min-height:54px;resize:vertical}
 @media (max-width:640px){.trow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header class="top">
-     <div class="ub"><span class="em" id="em"></span><span class="mode" id="mode">وضع العرض فقط</span><button id="lb" class="btn pri" type="button">تسجيل الدخول</button>
-<!-- ضع زر الانتقال هنا -->
-  <a href="https://mohammedainme321-amano.github.io/whay/شؤون المقر/" onclick="openHqTab()" class="btn lg-interactive" style="position: absolute; top: 15px; left: 20px; background: #e0f2fe;color: #023047; border: 2px solid #219EBC; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 12px rgba(33, 158, 188, 0.2); transition: all 0.3s ease; z-index: 1000; text-decoration: none; display: inline-flex; align-items: center; gap:8px;" title="إدارة شؤون المقر والمطبخ" onmouseover="this.style.transform='scale(1.08)'; this.style.backgroundColor='#bae0f5';" onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#e0f2fe';">
-  🏢 شؤون المقر
-  </a>
+  <div class="ub">
+    <span class="em" id="em"></span>
+    <span class="mode" id="mode">وضع العرض فقط</span>
+    <button id="lb" class="btn pri" type="button">تسجيل الدخول</button>
+    <a href="https://mohammedainme321-amano.github.io/whay/شؤون المقر/" class="btn lg-interactive" style="position: absolute; top: 15px; left: 20px; background: #e0f2fe;color: #023047; border: 2px solid #219EBC; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 12px rgba(33, 158, 188, 0.2); transition: all 0.3s ease; z-index: 1000; text-decoration: none; display: inline-flex; align-items: center; gap:8px;" title="إدارة شؤون المقر والمطبخ" onmouseover="this.style.transform='scale(1.08)'; this.style.backgroundColor='#bae0f5';" onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#e0f2fe';">
+    🏢 شؤون المقر
+    </a>
   </div>
-<div class="ttl"><h1>موقع الإدارة العامة لدار القرآن</h1></div>
-<div class="verse" aria-label="آية">﴿وَأَمَّا بِنِعْمَةِ رَبِّكَ فَحَدِّثْ﴾</div>
+  <div class="ttl">
+    <h1>موقع الإدارة العامة لدار القرآن</h1>
+    <div class="ar-date" id="arDate"></div>
+  </div>
+  <div class="verse" aria-label="آية">﴿وَأَمَّا بِنِعْمَةِ رَبِّكَ فَحَدِّثْ﴾</div>
 </header>
 <nav class="tabs" aria-label="أقسام النظام"><div id="nav"></div></nav>
-<main><div id="notice" class="err" role="alert" hidden></div><div id="app"></div>
-<details class="setup"><summary>إعداد قاعدة البيانات (Supabase ← SQL Editor)</summary><p>شغّل الكود التالي مرة واحدة. القراءة متاحة للجميع، والإضافة والتعديل والحذف للمسجّلين فقط. الحسابات تُنشأ من Authentication ← Users.</p><pre class="sql">create table if not exists staff(id bigint generated always as identity primary key,name text not null,phone text,role text,department text,created_at timestamptz default now());
+<main>
+  <div id="notice" class="err" role="alert" hidden></div>
+  <div id="app"></div>
+  <details class="setup"><summary>إعداد قاعدة البيانات (Supabase ← SQL Editor)</summary><p>شغّل الكود التالي مرة واحدة. القراءة متاحة للجميع، والإضافة والتعديل والحذف للمسجّلين فقط. الحسابات تُنشأ من Authentication ← Users.</p><pre class="sql">create table if not exists staff(id bigint generated always as identity primary key,name text not null,phone text,role text,department text,created_at timestamptz default now());
 alter table staff add column if not exists phone text;
 create table if not exists activities(id bigint generated always as identity primary key,department text not null,title text not null,description text,start_date date,end_date date,created_by text,created_at timestamptz default now());
 create table if not exists subtasks(id bigint generated always as identity primary key,activity_id bigint references activities(id) on delete cascade,department text not null,title text not null,assignee_name text,assignee_phone text,due_date date,progress int default 0 check(progress between 0 and 100),stumble_reason text,checklist jsonb default '[]'::jsonb,updated_at timestamptz default now());
@@ -183,8 +168,9 @@ alter table subtasks add column if not exists assignee_phone text;
 alter table subtasks add column if not exists checklist jsonb default '[]'::jsonb;
 create table if not exists challenges(id bigint generated always as identity primary key,department text not null,title text not null,details text,severity text,status text default 'open',created_at timestamptz default now());
 create table if not exists decisions(id bigint generated always as identity primary key,department text not null,title text not null,details text,status text default 'pending',created_at timestamptz default now());
+create table if not exists reports(id bigint generated always as identity primary key,department text,title text not null,report_date text,manager text,time_range text,location text,attendees_count text,payload jsonb default '{}'::jsonb,created_by text,created_at timestamptz default now());
 do $$ declare t text; begin
-foreach t in array array['staff','activities','subtasks','challenges','decisions'] loop
+foreach t in array array['staff','activities','subtasks','challenges','decisions','reports'] loop
 execute format('alter table %I enable row level security',t);
 execute format('drop policy if exists public_read on %I',t);
 execute format('drop policy if exists auth_insert on %I',t);
@@ -196,6 +182,8 @@ execute format('create policy auth_update on %I for update to authenticated usin
 execute format('create policy auth_delete on %I for delete to authenticated using (true)',t);
 end loop; end $$;</pre></details>
 </main>
+
+<!-- نافذة تسجيل الدخول -->
 <div class="modal" id="login" hidden><div class="lc"><div class="brand"><h2>موقع الإدارة العامة لدار القرآن</h2></div>
 <form id="lf">
 <label class="field"><span>البريد الإلكتروني للدخول وتحرير مساحات الأقسام</span><input type="email" id="le" required autocomplete="username"></label>
@@ -203,16 +191,139 @@ end loop; end $$;</pre></details>
 <div class="err" id="lerr" hidden></div>
 <button class="primary" type="submit">دخول</button><button type="button" class="cancel" id="lc">إغلاق</button></form>
 <p class="hint">أدخل بريد وكلمة مرور حسابك في Supabase لتفعيل وضع التحرير.</p></div></div>
+
+<!-- نافذة تعديل الكادر -->
+<div class="modal" id="editStaffModal" hidden><div class="lc">
+  <div class="brand"><h2>تعديل بيانات الكادر</h2></div>
+  <form id="esf">
+    <input type="hidden" id="es_id">
+    <label class="field"><span>الاسم</span><input type="text" id="es_name" required></label>
+    <label class="field"><span>رقم التواصل / الواتساب</span><input type="tel" id="es_phone" placeholder="05xxxxxxxx"></label>
+    <label class="field"><span>المسمى / الدور</span><input type="text" id="es_role"></label>
+    <label class="field"><span>القسم</span><select id="es_dept"></select></label>
+    <button class="primary" type="submit">حفظ التعديلات</button>
+    <button type="button" class="cancel" id="esc">إلغاء</button>
+  </form>
+</div></div>
+
+<!-- نافذة نموذج التقرير التفاعلي (مطابق لقالب Word) -->
+<div class="modal" id="repModal" hidden><div class="lc wide">
+  <form id="repForm">
+    <div class="w-doc">
+      <div class="w-head">
+        <h3>لــجـنــة وحـــيُ الســمــاء بـالأحـسـاء</h3>
+        <p>كتابة التقارير | إدارة التعليم | قسم المقامات</p>
+      </div>
+      <div class="w-sec-t">بطاقة التقرير</div>
+      <table class="w-tbl">
+        <tr>
+          <th>القسم التابع</th>
+          <td colspan="3"><select id="rp_dept"></select></td>
+        </tr>
+        <tr>
+          <th>عنوان الاجتماع أو النشاط *</th>
+          <td><input type="text" id="rp_title" required placeholder="أدخل عنوان الاجتماع أو النشاط"></td>
+          <th>اليوم والتاريخ</th>
+          <td><input type="text" id="rp_date" required></td>
+        </tr>
+        <tr>
+          <th>المسؤول</th>
+          <td><input type="text" id="rp_manager" placeholder="اسم المسؤول"></td>
+          <th>وقت البداية والنهاية</th>
+          <td><input type="text" id="rp_time" placeholder="مثال: 4:00 م - 6:00 م"></td>
+        </tr>
+        <tr>
+          <th>المكان</th>
+          <td><input type="text" id="rp_loc" placeholder="مقر الدار / القاعة"></td>
+          <th>عدد الحضور</th>
+          <td><input type="number" id="rp_count" min="0" placeholder="0"></td>
+        </tr>
+      </table>
+
+      <div class="w-sec-t" style="display:flex;justify-content:space-between;align-items:center">
+        <span>الحضور وأدوارهم في الاجتماع</span>
+        <button type="button" class="btn sm" id="addAttBtn">+ إضافة حاضر</button>
+      </div>
+      <table class="w-tbl">
+        <thead><tr><th style="width:45px">م</th><th>الاسم</th><th>دوره في الاجتماع</th><th style="width:55px">حذف</th></tr></thead>
+        <tbody id="rp_att_body"></tbody>
+      </table>
+
+      <div class="w-sec-t" style="display:flex;justify-content:space-between;align-items:center">
+        <span>المحاور المطروحة ومجرياتها والخلاصة</span>
+        <button type="button" class="btn sm" id="addAxisBtn">+ إضافة محور</button>
+      </div>
+      <table class="w-tbl">
+        <thead><tr><th style="width:45px">م</th><th>المحاور المطروحة أو الأهداف</th><th>مجريات المحور</th><th>الخلاصة (نقاط متسلسلة)</th><th style="width:55px">حذف</th></tr></thead>
+        <tbody id="rp_axes_body"></tbody>
+      </table>
+
+      <div class="w-sec-t" style="display:flex;justify-content:space-between;align-items:center">
+        <span>تحليل الأداء (نقاط القوة ونقاط الضعف)</span>
+        <button type="button" class="btn sm" id="addSwotBtn">+ إضافة بند</button>
+      </div>
+      <table class="w-tbl">
+        <thead><tr><th style="width:45px">م</th><th>المحور أو الهدف</th><th>نقاط القوة والإيجابيات</th><th>نقاط الضعف والسلبيات</th><th style="width:55px">حذف</th></tr></thead>
+        <tbody id="rp_swot_body"></tbody>
+      </table>
+
+      <div class="w-sec-t" style="display:flex;justify-content:space-between;align-items:center">
+        <span>التوصيات والقرارات المعتمدة</span>
+        <button type="button" class="btn sm" id="addDecBtn">+ إضافة بند</button>
+      </div>
+      <table class="w-tbl">
+        <thead><tr><th>التوصيات والاقتراحات</th><th>القرارات المعتمدة</th><th style="width:55px">حذف</th></tr></thead>
+        <tbody id="rp_dec_body"></tbody>
+      </table>
+
+      <div class="w-sec-t" style="display:flex;justify-content:space-between;align-items:center">
+        <span>جدول التكليفات والمواعيد النهائية للتنفيذ</span>
+        <button type="button" class="btn sm" id="addTaskBtn">+ إضافة تكليف</button>
+      </div>
+      <table class="w-tbl">
+        <thead><tr><th style="width:45px">م</th><th>التكليف</th><th>المسؤول عنه</th><th>المواعيد النهائية للتنفيذ</th><th style="width:55px">حذف</th></tr></thead>
+        <tbody id="rp_tasks_body"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+      <button class="primary" type="submit" style="flex:1">💾 حفظ في الجهاز (Word) وإرسال التقرير للموقع</button>
+      <button type="button" class="btn red" id="closeRepBtn">إغلاق</button>
+    </div>
+  </form>
+</div></div>
+
 <div id="toast" class="toast" hidden></div>
+
 <script>
 (function(){
 "use strict";
-/* إعدادات Supabase (Project Settings ← API): الرابط والمفتاح العام (anon / publishable) */
 var SUPABASE_URL="https://copvxmmfifdjdqsotxrc.supabase.co";
 var SUPABASE_ANON_KEY="sb_publishable_C9SD2WS5j3ch2mcwTRmPBQ_jyGFxKWx";
 var DEPTS=[["act","قسم الأنشطة والفعاليات","🎉"],["hq","قسم شؤون المقر","🏢"],["media","قسم الإعلام","🎬"],["prog","قسم البرامج والدورات القصيرة","🎓"],["pr","قسم العلاقات العامة","🤝"]];
-var D={staff:[],activities:[],subtasks:[],challenges:[],decisions:[]};
+var D={staff:[],activities:[],subtasks:[],challenges:[],decisions:[],reports:[]};
 var S={user:null,view:"home",dept:null,tab:"plan"};
+
+/* ---------- التاريخ العربي والهجري ---------- */
+function arFullDate(dt){
+  var d=dt?new Date(dt):new Date();
+  if(isNaN(d.getTime()))return String(dt||"—");
+  var hijri="",greg="";
+  try{hijri=new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(d)}catch(e){}
+  try{greg=new Intl.DateTimeFormat("ar-SA",{day:"numeric",month:"long",year:"numeric",calendar:"gregory"}).format(d)}catch(e){}
+  return hijri?(hijri+" — "+greg):greg;
+}
+function arShortDate(ds){
+  if(!ds)return"—";
+  var d=new Date(ds);
+  if(isNaN(d.getTime()))return String(ds);
+  try{
+    var h=new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura",{day:"numeric",month:"short",year:"numeric"}).format(d);
+    var g=new Intl.DateTimeFormat("ar-SA",{day:"numeric",month:"short",year:"numeric",calendar:"gregory"}).format(d);
+    return h+" ("+g+")";
+  }catch(e){return String(ds)}
+}
+function updateHeaderDate(){var elDate=$("arDate");if(elDate)elDate.textContent="📅 "+arFullDate(new Date())}
 
 /* ---------- helpers ---------- */
 function $(i){return document.getElementById(i)}
@@ -223,16 +334,26 @@ function inp(type,name,req){var i=el("input");i.type=type;i.name=name;if(req)i.r
 function ta(name){var t=el("textarea");t.name=name;return t}
 function sel(name,opts){var s=el("select");s.name=name;opts.forEach(function(o){var x=el("option","",o[1]);x.value=o[0];s.appendChild(x)});return s}
 function btn(t,c,fn){var b=el("button","btn "+(c||""),t);b.type="button";b.onclick=fn;return b}
-function dn(k){for(var i=0;i<DEPTS.length;i++)if(DEPTS[i][0]===k)return DEPTS[i][1];return k||"—"}
+function dn(k){for(var i=0;i<DEPTS.length;i++)if(DEPTS[i][0]===k)return DEPTS[i][1];return k||"عام"}
 function today(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function avg(a){return a.length?Math.round(a.reduce(function(s,t){return s+(+t.progress||0)},0)/a.length):0}
 function late(t){return !!(t.due_date&&String(t.due_date).slice(0,10)<today()&&(+t.progress||0)<100)}
 function inDept(a,k){return a.filter(function(r){return r.department===k}).sort(function(x,y){return y.id-x.id})}
 function bar(p){var b=el("div","bar"),i=el("i");i.style.width=p+"%";return add(b,i)}
-function norm(s){return String(s||"").trim().toLowerCase()}
+function escHtml(s){return String(s||"").replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 var tt;function toast(m){var t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true},4500)}
 
-/* ---------- Supabase client (Auth + Database) ---------- */
+/* ---------- تنسيق رقم الواتساب ---------- */
+function waLink(phone,text){
+  var p=String(phone||"").replace(/\D/g,"");
+  if(!p)return"";
+  if(p.startsWith("05"))p="966"+p.slice(1);
+  else if(p.startsWith("5")&&p.length===9)p="966"+p;
+  else if(p.startsWith("00"))p=p.slice(2);
+  return"https://wa.me/"+p+(text?"?text="+encodeURIComponent(text):"");
+}
+
+/* ---------- Supabase client ---------- */
 function safeFetch(input,init){
   var o={},src=init||{},plain={},h=src.headers;
   Object.keys(src).forEach(function(k){if(k!=="signal"&&k!=="headers")o[k]=src[k]});
@@ -252,10 +373,9 @@ function friendly(m){var l=String(m).toLowerCase();
   if(l.indexOf("row-level security")>-1||l.indexOf("permission denied")>-1)return"صلاحيات الجدول (RLS) غير مضبوطة أو تحتاج تسجيل الدخول. ["+m+"]";
   if(l.indexOf("failed to fetch")>-1||l.indexOf("load failed")>-1)return"تعذر الاتصال بـ Supabase. تحقق من الإنترنت. ["+m+"]";
   return m}
-/* always returns plain JSON data + a string error, never raw response objects */
 async function q(fn){try{var r=await fn();return{data:r&&r.data?JSON.parse(JSON.stringify(r.data)):null,error:r&&r.error?errText(r.error):null}}catch(e){return{data:null,error:errText(e)}}}
 async function load(){
-  if(!sb){$("notice").textContent="تعذر تحميل مكتبة Supabase أو إعداداتها (SUPABASE_URL / SUPABASE_ANON_KEY).";$("notice").hidden=false;return}
+  if(!sb){$("notice").textContent="تعذر تحميل مكتبة Supabase أو إعداداتها.";$("notice").hidden=false;return}
   var T=Object.keys(D),rs=await Promise.all(T.map(function(t){return q(function(){return sb.from(t).select("*")})})),err="";
   rs.forEach(function(r,i){D[T[i]]=(r.data||[]).filter(function(x){return x.department!=="edu"});if(r.error&&!err)err=T[i]+": "+friendly(r.error)});
   $("notice").textContent=err;$("notice").hidden=!err;render();
@@ -275,6 +395,169 @@ $("lf").onsubmit=async function(e){e.preventDefault();var er=$("lerr"),sub=e.tar
   if(r.error){er.textContent="تعذر الدخول: "+friendly(r.error);er.hidden=false;return}
   er.hidden=true;$("lp").value="";$("login").hidden=true;setUser(r.data&&r.data.user)};
 
+/* ---------- تعديل الكادر ---------- */
+$("esc").onclick=function(){$("editStaffModal").hidden=true};
+function openEditStaff(s){
+  if(!needAuth())return;
+  $("es_id").value=s.id;
+  $("es_name").value=s.name||"";
+  $("es_phone").value=s.phone||"";
+  $("es_role").value=s.role||"";
+  var ds=$("es_dept");ds.innerHTML="";
+  DEPTS.forEach(function(d){var o=el("option","",d[1]);o.value=d[0];if(d[0]===s.department)o.selected=true;ds.appendChild(o)});
+  $("editStaffModal").hidden=false;
+}
+$("esf").onsubmit=async function(e){
+  e.preventDefault();if(!needAuth())return;
+  var id=$("es_id").value;
+  var payload={
+    name:$("es_name").value.trim(),
+    phone:$("es_phone").value.trim(),
+    role:$("es_role").value.trim(),
+    department:$("es_dept").value
+  };
+  $("editStaffModal").hidden=true;
+  done(await q(function(){return sb.from("staff").update(payload).eq("id",id)}),"تم تحديث بيانات الكادر");
+};
+
+/* ---------- نظام التقارير (نموذج Word + حفظ في الجهاز + إرسال في الموقع) ---------- */
+function renumber(tbody){
+  Array.prototype.forEach.call(tbody.children,function(tr,idx){
+    if(tr.cells[0]&&tr.cells[0].classList.contains("idx-cell"))tr.cells[0].textContent=String(idx+1);
+  });
+}
+function addAttRow(name,role){
+  var tb=$("rp_att_body"),tr=document.createElement("tr");
+  tr.innerHTML='<td class="idx-cell" style="text-align:center;font-weight:bold"></td><td><input type="text" class="att-name" value="'+escHtml(name)+'" placeholder="اسم الحاضر"></td><td><input type="text" class="att-role" value="'+escHtml(role)+'" placeholder="دوره في الاجتماع"></td><td style="text-align:center"><button type="button" class="btn sm red">✕</button></td>';
+  tr.querySelector("button").onclick=function(){tr.remove();renumber(tb)};
+  tb.appendChild(tr);renumber(tb);
+}
+function addAxisRow(axis,proc,sum){
+  var tb=$("rp_axes_body"),tr=document.createElement("tr");
+  tr.innerHTML='<td class="idx-cell" style="text-align:center;font-weight:bold"></td><td><textarea class="ax-title" placeholder="المحور أو الهدف">'+escHtml(axis)+'</textarea></td><td><textarea class="ax-proc" placeholder="مجريات المحور">'+escHtml(proc)+'</textarea></td><td><textarea class="ax-sum" placeholder="الخلاصة">'+escHtml(sum)+'</textarea></td><td style="text-align:center"><button type="button" class="btn sm red">✕</button></td>';
+  tr.querySelector("button").onclick=function(){tr.remove();renumber(tb)};
+  tb.appendChild(tr);renumber(tb);
+}
+function addSwotRow(axis,str,wk){
+  var tb=$("rp_swot_body"),tr=document.createElement("tr");
+  tr.innerHTML='<td class="idx-cell" style="text-align:center;font-weight:bold"></td><td><input type="text" class="sw-axis" value="'+escHtml(axis)+'" placeholder="المحور أو الهدف"></td><td><textarea class="sw-str" placeholder="نقاط القوة والإيجابيات">'+escHtml(str)+'</textarea></td><td><textarea class="sw-wk" placeholder="نقاط الضعف والسلبيات">'+escHtml(wk)+'</textarea></td><td style="text-align:center"><button type="button" class="btn sm red">✕</button></td>';
+  tr.querySelector("button").onclick=function(){tr.remove();renumber(tb)};
+  tb.appendChild(tr);renumber(tb);
+}
+function addDecRow(rec,dec){
+  var tb=$("rp_dec_body"),tr=document.createElement("tr");
+  tr.innerHTML='<td><textarea class="dc-rec" placeholder="التوصيات والاقتراحات">'+escHtml(rec)+'</textarea></td><td><textarea class="dc-dec" placeholder="القرارات المعتمدة">'+escHtml(dec)+'</textarea></td><td style="text-align:center"><button type="button" class="btn sm red">✕</button></td>';
+  tr.querySelector("button").onclick=function(){tr.remove()};
+  tb.appendChild(tr);
+}
+function addTaskRow(task,owner,due){
+  var tb=$("rp_tasks_body"),tr=document.createElement("tr");
+  tr.innerHTML='<td class="idx-cell" style="text-align:center;font-weight:bold"></td><td><input type="text" class="tk-title" value="'+escHtml(task)+'" placeholder="التكليف"></td><td><input type="text" class="tk-owner" value="'+escHtml(owner)+'" placeholder="المسؤول عنه"></td><td><input type="text" class="tk-due" value="'+escHtml(due)+'" placeholder="الموعد النهائي"></td><td style="text-align:center"><button type="button" class="btn sm red">✕</button></td>';
+  tr.querySelector("button").onclick=function(){tr.remove();renumber(tb)};
+  tb.appendChild(tr);renumber(tb);
+}
+$("addAttBtn").onclick=function(){addAttRow("","")};
+$("addAxisBtn").onclick=function(){addAxisRow("","","")};
+$("addSwotBtn").onclick=function(){addSwotRow("","","")};
+$("addDecBtn").onclick=function(){addDecRow("","")};
+$("addTaskBtn").onclick=function(){addTaskRow("","","")};
+$("closeRepBtn").onclick=function(){$("repModal").hidden=true};
+
+function openReportModal(){
+  var ds=$("rp_dept");ds.innerHTML="";
+  [["general","الإدارة العامة لدار القرآن"]].concat(DEPTS.map(function(d){return[d[0],d[1]]})).forEach(function(x){
+    var o=el("option","",x[1]);o.value=x[0];ds.appendChild(o);
+  });
+  $("rp_title").value="";
+  $("rp_date").value=arFullDate(new Date());
+  $("rp_manager").value="";
+  $("rp_time").value="";
+  $("rp_loc").value="";
+  $("rp_count").value="";
+  $("rp_att_body").innerHTML="";for(var i=0;i<5;i++)addAttRow("","");
+  $("rp_axes_body").innerHTML="";for(var j=0;j<3;j++)addAxisRow("","","");
+  $("rp_swot_body").innerHTML="";for(var k=0;k<3;k++)addSwotRow("","","");
+  $("rp_dec_body").innerHTML="";for(var m=0;m<2;m++)addDecRow("","");
+  $("rp_tasks_body").innerHTML="";for(var n=0;n<4;n++)addTaskRow("","","");
+  $("repModal").hidden=false;
+}
+
+/* توليد وتنزيل ملف Word (.doc) مطابق لتنسيق القالب الأصلي */
+function downloadWordReport(rep){
+  var p=rep.payload||{};
+  var attRows=(p.attendees||[]).map(function(a,i){return'<tr><td style="text-align:center">'+(i+1)+'</td><td>'+escHtml(a.name)+'</td><td>'+escHtml(a.role)+'</td></tr>'}).join("")||'<tr><td colspan="3" style="text-align:center">—</td></tr>';
+  var axRows=(p.axes||[]).map(function(a,i){return'<tr><td style="text-align:center">'+(i+1)+'-</td><td>'+escHtml(a.axis)+'</td><td>'+escHtml(a.proc)+'</td><td>'+escHtml(a.sum)+'</td></tr>'}).join("")||'<tr><td colspan="4" style="text-align:center">—</td></tr>';
+  var swRows=(p.swot||[]).map(function(a,i){return'<tr><td style="text-align:center">'+(i+1)+'-</td><td>'+escHtml(a.axis)+'</td><td>'+escHtml(a.str)+'</td><td>'+escHtml(a.wk)+'</td></tr>'}).join("")||'<tr><td colspan="4" style="text-align:center">—</td></tr>';
+  var dcRows=(p.decisions||[]).map(function(a){return'<tr><td>'+escHtml(a.rec)+'</td><td>'+escHtml(a.dec)+'</td></tr>'}).join("")||'<tr><td colspan="2" style="text-align:center">—</td></tr>';
+  var tkRows=(p.tasks||[]).map(function(a,i){return'<tr><td style="text-align:center">'+(i+1)+'</td><td>'+escHtml(a.task)+'</td><td>'+escHtml(a.owner)+'</td><td>'+escHtml(a.due)+'</td></tr>'}).join("")||'<tr><td colspan="4" style="text-align:center">—</td></tr>';
+
+  var htmlDoc='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl" lang="ar">'+
+  '<head><meta charset="utf-8"><style>body{font-family:"Traditional Arabic","Tajawal",Arial,sans-serif;direction:rtl}table{width:100%;border-collapse:collapse;margin-bottom:14pt}th,td{border:1px solid #075985;padding:6pt 8pt;font-size:13pt;text-align:right}th{background-color:#e0f2fe;color:#075985;font-weight:bold}.sec{background-color:#075985;color:#ffffff;font-weight:bold;text-align:center;font-size:14pt}</style></head><body>'+
+  '<table><tr><td colspan="2" style="text-align:center;background:#f0f9ff"><h2 style="margin:0;color:#075985">لــجـنــة وحـــيُ الســمــاء بـالأحـسـاء</h2><p style="margin:4pt 0 0;color:#0284c7;font-weight:bold">كتابة التقارير | إدارة التعليم | قسم المقامات — وحي السماء 1439 - 2018</p></td></tr></table>'+
+  '<table><tr><td colspan="4" class="sec">بطاقة التقرير ('+escHtml(dn(rep.department))+')</td></tr>'+
+  '<tr><th>عنوان الاجتماع أو النشاط</th><td>'+escHtml(rep.title)+'</td><th>اليوم والتاريخ</th><td>'+escHtml(rep.report_date)+'</td></tr>'+
+  '<tr><th>المسؤول</th><td>'+escHtml(rep.manager)+'</td><th>وقت البداية والنهاية</th><td>'+escHtml(rep.time_range)+'</td></tr>'+
+  '<tr><th>المكان</th><td>'+escHtml(rep.location)+'</td><th>عدد الحضور</th><td>'+escHtml(rep.attendees_count)+'</td></tr></table>'+
+  '<table><tr><td colspan="3" class="sec">الحضور وأدوارهم في الاجتماع</td></tr><tr><th style="width:40pt;text-align:center">م</th><th>الاسم</th><th>دوره في الاجتماع</th></tr>'+attRows+'</table>'+
+  '<table><tr><td colspan="4" class="sec">المحاور المطروحة ومجرياتها والخلاصة</td></tr><tr><th style="width:40pt;text-align:center">م</th><th>المحاور المطروحة أو الأهداف</th><th>مجريات المحور</th><th>الخلاصة (نقاط متسلسلة)</th></tr>'+axRows+'</table>'+
+  '<table><tr><td colspan="4" class="sec">نقاط القوة والإيجابيات ونقاط الضعف والسلبيات</td></tr><tr><th style="width:40pt;text-align:center">م</th><th>المحور أو الهدف</th><th>نقاط القوة والإيجابيات</th><th>نقاط الضعف والسلبيات</th></tr>'+swRows+'</table>'+
+  '<table><tr><td colspan="2" class="sec">التوصيات والاقتراحات والقرارات المعتمدة</td></tr><tr><th>التوصيات والاقتراحات</th><th>القرارات المعتمدة</th></tr>'+dcRows+'</table>'+
+  '<table><tr><td colspan="4" class="sec">جدول التكليفات والمواعيد النهائية للتنفيذ</td></tr><tr><th style="width:40pt;text-align:center">م</th><th>التكليف</th><th>المسؤول عنه</th><th>المواعيد النهائية للتنفيذ</th></tr>'+tkRows+'</table>'+
+  '</body></html>';
+
+  var blob=new Blob(["\ufeff",htmlDoc],{type:"application/msword;charset=utf-8"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="تقرير-"+(rep.title||"دار-القرآن").replace(/[\\/:*?"<>|]/g,"-")+".doc";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href)},1500);
+}
+
+$("repForm").onsubmit=async function(e){
+  e.preventDefault();
+  var attendees=[],axes=[],swot=[],decisions=[],tasks=[];
+  Array.prototype.forEach.call($("rp_att_body").children,function(tr){
+    var nm=tr.querySelector(".att-name").value.trim(),rl=tr.querySelector(".att-role").value.trim();
+    if(nm||rl)attendees.push({name:nm,role:rl});
+  });
+  Array.prototype.forEach.call($("rp_axes_body").children,function(tr){
+    var ax=tr.querySelector(".ax-title").value.trim(),pr=tr.querySelector(".ax-proc").value.trim(),sm=tr.querySelector(".ax-sum").value.trim();
+    if(ax||pr||sm)axes.push({axis:ax,proc:pr,sum:sm});
+  });
+  Array.prototype.forEach.call($("rp_swot_body").children,function(tr){
+    var ax=tr.querySelector(".sw-axis").value.trim(),st=tr.querySelector(".sw-str").value.trim(),wk=tr.querySelector(".sw-wk").value.trim();
+    if(ax||st||wk)swot.push({axis:ax,str:st,wk:wk});
+  });
+  Array.prototype.forEach.call($("rp_dec_body").children,function(tr){
+    var rc=tr.querySelector(".dc-rec").value.trim(),dc=tr.querySelector(".dc-dec").value.trim();
+    if(rc||dc)decisions.push({rec:rc,dec:dc});
+  });
+  Array.prototype.forEach.call($("rp_tasks_body").children,function(tr){
+    var tk=tr.querySelector(".tk-title").value.trim(),ow=tr.querySelector(".tk-owner").value.trim(),du=tr.querySelector(".tk-due").value.trim();
+    if(tk||ow||du)tasks.push({task:tk,owner:ow,due:du});
+  });
+
+  var repObj={
+    department:$("rp_dept").value,
+    title:$("rp_title").value.trim(),
+    report_date:$("rp_date").value.trim(),
+    manager:$("rp_manager").value.trim(),
+    time_range:$("rp_time").value.trim(),
+    location:$("rp_loc").value.trim(),
+    attendees_count:$("rp_count").value.trim(),
+    payload:{attendees:attendees,axes:axes,swot:swot,decisions:decisions,tasks:tasks},
+    created_by:S.user?S.user.email:"مستخدم النظام"
+  };
+
+  /* 1. حفظ ملف Word في جهاز المستخدم دون المساس بالقالب الأصلي */
+  downloadWordReport(repObj);
+
+  /* 2. إرسال التقرير إلى الموقع (Supabase) */
+  if(!needAuth()){toast("تم حفظ ملف Word على جهازك. سجّل الدخول لإرساله وحفظه داخل الموقع.");return}
+  $("repModal").hidden=true;
+  done(await q(function(){return sb.from("reports").insert(repObj)}),"تم حفظ ملف Word على جهازك وإرسال التقرير إلى الموقع بنجاح!");
+};
+
 /* ---------- reusable pieces ---------- */
 function cl(t){return Array.isArray(t.checklist)?t.checklist:[]}
 function pct(l){return l&&l.length?Math.round(l.filter(function(x){return x.d}).length*100/l.length):0}
@@ -282,7 +565,7 @@ function ckRow(box,txt,dn0){var r=el("div","ck"),c=el("input"),t=el("input");c.t
 function saveCk(t,nl,msg){return q(function(){return sb.from("subtasks").update({checklist:nl,progress:pct(nl),updated_at:new Date().toISOString()}).eq("id",t.id)}).then(function(r){done(r,msg)})}
 function taskCard(t){
   var c=el("div","card"),L=cl(t),p0=L.length?pct(L):(+t.progress||0);
-  add(c,el("h4","",t.title),el("p","mu","المكلّف: "+(t.assignee_name||"—")+(t.assignee_phone?" ("+t.assignee_phone+")":"")+" · الاستحقاق: "+(t.due_date||"—")));
+  add(c,el("h4","",t.title),el("p","mu","المكلّف: "+(t.assignee_name||"—")+(t.assignee_phone?" ("+t.assignee_phone+")":"")+" · الاستحقاق: "+arShortDate(t.due_date)));
   if(late(t))add(c,el("span","pill late","متأخرة"));
   add(c,bar(p0));
   var box=el("div","cklist");
@@ -314,7 +597,7 @@ function vHome(m){
   var T=D.subtasks,oc=D.challenges.filter(function(c){return c.status!=="resolved"}),pd=D.decisions.filter(function(d){return d.status==="pending"});
   var hi=oc.filter(function(c){return c.severity==="عالية"});
   var st=el("div","stats");
-  [["نسبة الإنجاز العامة",avg(T)+"%","",bar(avg(T)),0],["الأنشطة والخطط",String(D.activities.length),"",null,0],["التحديات المفتوحة",String(oc.length),hi.length?hi.length+" عالية الأهمية":"",null,hi.length],["القرارات المعلقة",String(pd.length),"",null,0]].forEach(function(x){
+  [["نسبة الإنجاز العامة",avg(T)+"%","",bar(avg(T)),0],["الأنشطة والخطط",String(D.activities.length),"",null,0],["التحديات المفتوحة",String(oc.length),hi.length?hi.length+" عالية الأهمية":"",null,hi.length],["التقارير المرفوعة",String(D.reports.length),"",null,0]].forEach(function(x){
     add(st,add(el("div","stat"+(x[4]?" bad":"")),el("span","",x[0]),el("strong","",x[1]),x[2]?el("small","",x[2]):null,x[3]))});
   add(m,st);
   var al=[];
@@ -336,9 +619,13 @@ function vHome(m){
   [["المهام المنجزة",fin,T.length],["الخطط والأنشطة المنجزة",pl,D.activities.length],["البنود الفرعية المنجزة",ckd,ck]].forEach(function(r){
     var p=r[2]?Math.round(r[1]*100/r[2]):0;add(sp,el("p","mu",r[0]+": "+r[1]+" من "+r[2]+" ("+p+"%)"),bar(p))});
   add(m,sp);
-  add(m,el("h2","hubt","إدارة الكوادر"));
-  var g2=el("nav","hub"),sa=el("a","portal");sa.href="#staff";
-  add(sa,el("span","ic","👥"),el("h3","","إدارة الكوادر"),el("p","",D.staff.length+" موظف · إضافة وحذف وتوزيع على الأقسام"));add(g2,sa);add(m,g2);
+  add(m,el("h2","hubt","الخدمات الإدارية"));
+  var g2=el("nav","hub");
+  var sa=el("a","portal");sa.href="#staff";
+  add(sa,el("span","ic","👥"),el("h3","","إدارة الكوادر"),el("p","",D.staff.length+" موظف · تعديل ومراسلة واتساب وتوزيع على الأقسام"));
+  var ra=el("a","portal");ra.href="#reports";
+  add(ra,el("span","ic","📄"),el("h3","","التقارير والاجتماعات"),el("p","",D.reports.length+" تقرير · تعبئة نموذج Word وتصديره وإرساله للموقع"));
+  add(g2,sa,ra);add(m,g2);
 }
 function overview(m,k){
   var ts=inDept(D.subtasks,k),ac=inDept(D.activities,k),lt=ts.filter(late),
@@ -386,7 +673,7 @@ function tPlan(m,k){
   add(p,f);add(m,p);
   inDept(D.activities,k).forEach(function(a){
     var ts=D.subtasks.filter(function(t){return t.activity_id===a.id}),c=el("div","card");
-    add(c,el("h4","",a.title),el("p","mu",(a.start_date||"—")+" ← "+(a.end_date||"—")),a.description?el("p","",a.description):null,bar(avg(ts)));
+    add(c,el("h4","",a.title),el("p","mu",arShortDate(a.start_date)+" ← "+arShortDate(a.end_date)),a.description?el("p","",a.description):null,bar(avg(ts)));
     ts.forEach(function(t){add(c,el("p","mu","• "+t.title+" — "+(t.assignee_name||"—")+" ("+(t.progress||0)+"%"+(cl(t).length?" · "+cl(t).filter(function(x){return x.d}).length+"/"+cl(t).length+" بنود":"")+")"))});
     add(c,btn("حذف النشاط","red",async function(){if(!needAuth()||!confirm("حذف النشاط ومهامه؟"))return;done(await q(function(){return sb.from("activities").delete().eq("id",a.id)}),"تم الحذف")}));
     add(m,c)});
@@ -395,7 +682,7 @@ function tLog(m,k){
   var ts=inDept(D.subtasks,k);
   add(m,el("p","mu","متوسط الإنجاز في القسم: "+avg(ts)+"%"),bar(avg(ts)));
   if(!ts.length)add(m,el("p","mu","لا توجد مهام لهذا القسم بعد."));
-  ts.forEach(function(t){add(m,taskCard(t,false))});
+  ts.forEach(function(t){add(m,taskCard(t))});
 }
 function notes(m,k,table,title,isIssue){
   var p=el("section","card"),f=el("form");
@@ -418,32 +705,93 @@ function notes(m,k,table,title,isIssue){
     add(m,c)});
 }
 function tIssues(m,k){notes(m,k,"challenges","التحديات والعوائق",true);notes(m,k,"decisions","القرارات المعلّقة",false)}
+
+/* ---------- صفحة إدارة الكوادر (مع التعديل والواتساب) ---------- */
 function vStaff(m){
   add(m,el("h2","","إدارة الكوادر"));
   var p=el("section","card"),f=el("form");
   add(p,el("h3","","إضافة موظف"));
-  add(f,add(el("div","grid"),fld("الاسم",inp("text","name",true)),fld("رقم التواصل / الهاتف",inp("tel","phone")),fld("المسمى / الدور",inp("text","role")),
+  add(f,add(el("div","grid"),fld("الاسم",inp("text","name",true)),fld("رقم التواصل / الواتساب",inp("tel","phone")),fld("المسمى / الدور",inp("text","role")),
     fld("القسم",sel("dept",DEPTS.map(function(d){return[d[0],d[1]]})))),el("button","btn pri","حفظ"));
   f.onsubmit=async function(e){e.preventDefault();if(!needAuth())return;var x=f.elements;
     done(await q(function(){return sb.from("staff").insert({name:x.name.value.trim(),phone:x.phone.value.trim(),role:x.role.value.trim(),department:x.dept.value})}),"تمت إضافة الموظف")};
   add(p,f);add(m,p);
   var g=el("div","grid");
-  D.staff.forEach(function(s){add(g,add(el("div","card"),el("h4","",s.name),el("p","mu",(s.role||"—")+" · "+dn(s.department)),el("p","mu","📞 "+(s.phone||"—")),
-    btn("حذف","red",async function(){if(!needAuth()||!confirm("حذف الموظف؟"))return;done(await q(function(){return sb.from("staff").delete().eq("id",s.id)}),"تم الحذف")})))});
+  D.staff.forEach(function(s){
+    var card=el("div","card");
+    add(card,el("h4","",s.name),el("p","mu",(s.role||"—")+" · "+dn(s.department)),el("p","mu","📞 "+(s.phone||"لا يوجد رقم")));
+    var brow=el("div","btn-row");
+    var wl=waLink(s.phone,"السلام عليكم أستاذ "+s.name+"، تواصل من الإدارة العامة لدار القرآن:");
+    if(wl){
+      var waBtn=el("a","btn sm wa","💬 واتساب");
+      waBtn.href=wl;waBtn.target="_blank";waBtn.rel="noopener";
+      add(brow,waBtn);
+    }
+    add(brow,
+      btn("✏️ تعديل","sm",function(){openEditStaff(s)}),
+      btn("🗑️ حذف","sm red",async function(){if(!needAuth()||!confirm("حذف الموظف؟"))return;done(await q(function(){return sb.from("staff").delete().eq("id",s.id)}),"تم الحذف")})
+    );
+    add(card,brow);
+    add(g,card);
+  });
   add(m,g);
 }
+
+/* ---------- صفحة التقارير ---------- */
+function vReports(m){
+  add(m,el("h2","","التقارير والاجتماعات"));
+  var topCard=el("section","card");
+  add(topCard,
+    el("h3","","نموذج تقرير اجتماع / نشاط (قالب Word الرسمي)"),
+    el("p","mu","افتح النموذج، عبّئ بيانات الاجتماع والحضور والمحاور والتكليفات، ثم اضغط «حفظ وإرسال» ليتم تنزيل نسخة Word على جهازك وإرسال التقرير للموقع فوراً دون المساس بالقالب الأصلي."),
+    btn("📝 فتح نموذج التقرير وتعبئته","pri",openReportModal)
+  );
+  add(m,topCard);
+
+  var list=D.reports.slice().sort(function(a,b){return b.id-a.id});
+  if(!list.length){
+    add(m,el("div","card","لا توجد تقارير مرسلة بعد. اضغط على الزر أعلاه لإنشاء أول تقرير."));
+    return;
+  }
+  list.forEach(function(r){
+    var c=el("div","card"),pl=r.payload||{};
+    add(c,
+      el("h3","","📄 "+r.title),
+      el("p","mu","القسم: "+dn(r.department)+" · التاريخ: "+(r.report_date||arFullDate(r.created_at))),
+      el("p","mu","المسؤول: "+(r.manager||"—")+" · المكان: "+(r.location||"—")+" · الحضور: "+(r.attendees_count||"0")+" · الوقت: "+(r.time_range||"—"))
+    );
+    if(pl.axes&&pl.axes.length){
+      var ul=el("div","mu");
+      ul.innerHTML="<strong>أبرز المحاور:</strong> "+pl.axes.map(function(a){return escHtml(a.axis)}).filter(Boolean).join(" • ");
+      add(c,ul);
+    }
+    var brow=el("div","btn-row");
+    add(brow,
+      btn("📥 تحميل نسخة Word","sm",function(){downloadWordReport(r)}),
+      btn("🗑️ حذف التقرير","sm red",async function(){if(!needAuth()||!confirm("حذف هذا التقرير؟"))return;done(await q(function(){return sb.from("reports").delete().eq("id",r.id)}),"تم حذف التقرير")})
+    );
+    add(c,brow);
+    add(m,c);
+  });
+}
+
 function gate(m,k){
   var c=el("div","card");
   add(m,el("h2","",dn(k)),add(c,el("h3","","🔒 مساحة القسم تتطلب تسجيل الدخول"),
     el("p","mu","للوصول إلى بناء الخطة وسجل المهام والتحديات والقرارات، سجّل الدخول ببريدك الإلكتروني أولًا."),
     btn("تسجيل الدخول","pri",function(){$("login").hidden=false})," ",(function(){var a=el("a","btn","العودة للرئيسية");a.href="#home";return a})()));
 }
+
 /* ---------- router ---------- */
 function render(){
   var m=$("app"),nv=$("nav");m.textContent="";nv.textContent="";
-  [["#home","📊 لوحة المتابعة","home"],["#staff","👥 إدارة الكوادر","staff"]].forEach(function(x){var a=el("a","tab"+(S.view===x[2]?" on":""),x[1]);a.href=x[0];add(nv,a)});
+  [["#home","📊 لوحة المتابعة","home"],["#reports","📄 التقارير","reports"],["#staff","👥 إدارة الكوادر","staff"]].forEach(function(x){
+    var a=el("a","tab"+(S.view===x[2]?" on":""),x[1]);a.href=x[0];add(nv,a)});
   DEPTS.forEach(function(d){var a=el("a","tab"+(S.view==="dept"&&S.dept===d[0]?" on":""),d[2]+" "+d[1].replace("قسم ",""));a.href="#dept/"+d[0]+"/plan";add(nv,a)});
-  if(S.view==="dept"&&S.dept){if(S.user)vDept(m,S.dept);else gate(m,S.dept)}else if(S.view==="staff")vStaff(m);else vHome(m);
+  if(S.view==="dept"&&S.dept){if(S.user)vDept(m,S.dept);else gate(m,S.dept)}
+  else if(S.view==="staff")vStaff(m);
+  else if(S.view==="reports")vReports(m);
+  else vHome(m);
 }
 function route(){
   var h=(location.hash||"#home").slice(1).split("/");
@@ -455,6 +803,7 @@ function route(){
 window.addEventListener("hashchange",route);
 window.addEventListener("unhandledrejection",function(e){if(e.preventDefault)e.preventDefault();toast(friendly(errText(e.reason)))});
 
+updateHeaderDate();
 setUser(null);
 (async function(){
   var r=await q(function(){return sb.auth.getSession()}),s=r.data&&r.data.session;
