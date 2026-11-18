@@ -849,7 +849,6 @@ function render(){
     var a=el("a","tab"+(S.view===x[2]?" on":""),x[1]);a.href=x[0];add(nv,a)});
   DEPTS.forEach(function(d){var a=el("a","tab"+(S.view==="dept"&&S.dept===d[0]?" on":""),d[2]+" "+d[1].replace("قسم ",""));a.href="#dept/"+d[0]+"/plan";add(nv,a)});
   
-  /* السماح بعرض الأقسام وسجل المهام للجميع بدون إجبار على تسجيل الدخول */
   if(S.view==="dept"&&S.dept)vDept(m,S.dept);
   else if(S.view==="staff")vStaff(m);
   else if(S.view==="reports")vReports(m);
@@ -862,6 +861,19 @@ function route(){
   if(S.view==="dept"&&!DEPTS.some(function(d){return d[0]===S.dept}))S.view="home";
   render();window.scrollTo(0,0);
 }
+
+window.addEventListener("hashchange",route);
+window.addEventListener("unhandledrejection",function(e){if(e.preventDefault)e.preventDefault();toast(friendly(errText(e.reason)))});
+
+updateHeaderDate();
+setUser(null);
+(async function(){
+  var r=await q(function(){return sb.auth.getSession()}),s=r.data&&r.data.session;
+  setUser(s?s.user:null);route();
+  try{sb.auth.onAuthStateChange(function(ev,session){var em=session&&session.user&&session.user.email||null;if((S.user&&S.user.email||null)===em)return;setUser(session?session.user:null)})}catch(e){}
+})();
+load();
+})();
 </script>
 </body>
 </html>
