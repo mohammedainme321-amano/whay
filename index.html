@@ -323,6 +323,58 @@ function arShortDate(ds){
     return h+" ("+g+")";
   }catch(e){return String(ds)}
 }
+
+/* ---------- منتقي التاريخ الهجري المخصص (أم القرى) ---------- */
+var HIJRI_MONTHS=["محرم","صفر","ربيع الأول","ربيع الآخر","جمادى الأولى","جمادى الآخرة","رجب","شعبان","رمضان","شوال","ذو القعدة","ذو الحجة"];
+
+function hijriToGregStr(hy,hm,hd){
+  var base=new Date(2024,6,7); /* 1 محرم 1446 هـ */
+  var diffDays=Math.round(((hy-1446)*354.36667)+((hm-1)*29.53059)+(hd-1));
+  var approx=new Date(base.getTime()+diffDays*864e5);
+  var fmt=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura",{year:"numeric",month:"numeric",day:"numeric"});
+  for(var i=-4;i<=4;i++){
+    var cand=new Date(approx.getTime()+i*864e5);
+    var parts=fmt.formatToParts(cand),cy=0,cm=0,cd=0;
+    parts.forEach(function(p){if(p.type==="year")cy=+p.value;if(p.type==="month")cm=+p.value;if(p.type==="day")cd=+p.value});
+    if(cy===hy&&cm===hm&&cd===hd){
+      return cand.getFullYear()+"-"+("0"+(cand.getMonth()+1)).slice(-2)+"-"+("0"+cand.getDate()).slice(-2);
+    }
+  }
+  return approx.getFullYear()+"-"+("0"+(approx.getMonth()+1)).slice(-2)+"-"+("0"+approx.getDate()).slice(-2);
+}
+
+function getTodayHijri(){
+  var parts=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura",{year:"numeric",month:"numeric",day:"numeric"}).formatToParts(new Date());
+  var r={y:1448,m:6,d:1};
+  parts.forEach(function(p){if(p.type==="year")r.y=+p.value;if(p.type==="month")r.m=+p.value;if(p.type==="day")r.d=+p.value});
+  return r;
+}
+
+function hijriPicker(name){
+  var wrap=el("div"),hid=inp("hidden",name),row=el("div");
+  row.style.cssText="display:grid;grid-template-columns:1fr 1.6fr 1.2fr;gap:.4rem";
+  var th=getTodayHijri();
+  var sd=el("select"),sm=el("select"),sy=el("select");
+  sd.appendChild(new Option("اليوم",""));
+  for(var d=1;d<=30;d++)sd.appendChild(new Option(d+" هـ",String(d)));
+  sm.appendChild(new Option("الشهر الهجري",""));
+  HIJRI_MONTHS.forEach(function(m,idx){sm.appendChild(new Option(m,String(idx+1)))});
+  sy.appendChild(new Option("السنة",""));
+  for(var y=th.y-1;y<=th.y+4;y++)sy.appendChild(new Option(y+" هـ",String(y)));
+
+  function sync(){
+    if(sd.value&&sm.value&&sy.value){
+      hid.value=hijriToGregStr(+sy.value,+sm.value,+sd.value);
+    }else{
+      hid.value="";
+    }
+  }
+  sd.onchange=sm.onchange=sy.onchange=sync;
+  add(row,sd,sm,sy);
+  add(wrap,hid,row);
+  return wrap;
+}
+  
 function updateHeaderDate(){var elDate=$("arDate");if(elDate)elDate.textContent="📅 "+arFullDate(new Date())}
 
 /* ---------- helpers ---------- */
@@ -588,7 +640,8 @@ function rowStaff(k){
   var list=D.staff.slice().sort(function(a,b){return (b.department===k)-(a.department===k)});
   var opts=[["","اختر الموظف…"]].concat(list.map(function(s){return[String(s.id),s.name+" — "+(s.role||"بدون مسمى")+" ("+dn(s.department)+")"]}));
   var row=el("div","trow");
-  add(row,fld("الموظف",sel("staff",opts)),fld("المهمة (إعداد، نظافة، إشراف…)",inp("text","title")),fld("الاستحقاق",inp("date","due")),btn("حذف","red",function(){row.remove()}));var cb=el("div","cklist"),cw=el("div","cl");add(cw,el("p","mu","البنود الفرعية (اختياري):"),cb,btn("+ بند فرعي","",function(){ckRow(cb)}));add(row,cw);
+  add(row,fld("الموظف",sel("staff",opts)),fld("المهمة (إعداد، نظافة، إشراف…)",inp("text","title")),fld("الاستحقاق (هجري)",hijriPicker("due")),btn("حذف","red",function(){row.remove()}));
+  var cb=el("div","cklist"),cw=el("div","cl");add(cw,el("p","mu","البنود الفرعية (اختياري):"),cb,btn("+ بند فرعي","",function(){ckRow(cb)}));add(row,cw);
   return row;
 }
 
@@ -655,22 +708,11 @@ function tPlan(m,k){
   var p=el("section","card"),f=el("form"),box=el("div"),dep=inp("text","dept");
   dep.value=dn(k);dep.readOnly=true;
   add(p,el("h3","","إضافة نشاط / خطة جديدة"));
-  
-  /* إنشاء حقول التاريخ مع ضبط التقويم الافتراضي على الهجري (أم القرى) */
-  var inpStart = inp("date","start");
-  inpStart.setAttribute("calendar", "islamic-umalqura");
-  var inpEnd = inp("date","end");
-  inpEnd.setAttribute("calendar", "islamic-umalqura");
-
   add(f,fld("القسم",dep),fld("عنوان النشاط",inp("text","title",true)),fld("الوصف",ta("desc")),
-    add(el("div","grid"),
-      fld("تاريخ البداية (هجري)", inpStart),
-      fld("تاريخ النهاية (هجري)", inpEnd)
-    ),
+    add(el("div","grid"),fld("تاريخ البداية (هجري)",hijriPicker("start")),fld("تاريخ النهاية (هجري)",hijriPicker("end"))),
     el("h4","","المهام الفرعية والمكلّفون"),box);
   add(box,rowStaff(k));
   add(f,btn("+ إضافة مهمة لموظف آخر","",function(){add(box,rowStaff(k))}),document.createTextNode(" "),el("button","btn pri","حفظ النشاط"));
-  
   f.onsubmit=async function(e){e.preventDefault();if(!needAuth())return;
     var tasks=[];Array.prototype.forEach.call(box.children,function(r){
       var sid=r.querySelector("[name=staff]").value,ti=r.querySelector("[name=title]").value.trim();if(!sid||!ti)return;
@@ -689,6 +731,7 @@ function tPlan(m,k){
     add(c,btn("حذف النشاط","red",async function(){if(!needAuth()||!confirm("حذف النشاط ومهامه؟"))return;done(await q(function(){return sb.from("activities").delete().eq("id",a.id)}),"تم الحذف")}));
     add(m,c)});
 }
+  
 function tLog(m,k){
   var ts=inDept(D.subtasks,k);
   add(m,el("p","mu","متوسط الإنجاز في القسم: "+avg(ts)+"%"),bar(avg(ts)));
