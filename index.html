@@ -655,11 +655,22 @@ function tPlan(m,k){
   var p=el("section","card"),f=el("form"),box=el("div"),dep=inp("text","dept");
   dep.value=dn(k);dep.readOnly=true;
   add(p,el("h3","","إضافة نشاط / خطة جديدة"));
+  
+  /* إنشاء حقول التاريخ مع ضبط التقويم الافتراضي على الهجري (أم القرى) */
+  var inpStart = inp("date","start");
+  inpStart.setAttribute("calendar", "islamic-umalqura");
+  var inpEnd = inp("date","end");
+  inpEnd.setAttribute("calendar", "islamic-umalqura");
+
   add(f,fld("القسم",dep),fld("عنوان النشاط",inp("text","title",true)),fld("الوصف",ta("desc")),
-    add(el("div","grid"),fld("البداية",inp("date","start")),fld("النهاية",inp("date","end"))),
+    add(el("div","grid"),
+      fld("تاريخ البداية (هجري)", inpStart),
+      fld("تاريخ النهاية (هجري)", inpEnd)
+    ),
     el("h4","","المهام الفرعية والمكلّفون"),box);
   add(box,rowStaff(k));
   add(f,btn("+ إضافة مهمة لموظف آخر","",function(){add(box,rowStaff(k))}),document.createTextNode(" "),el("button","btn pri","حفظ النشاط"));
+  
   f.onsubmit=async function(e){e.preventDefault();if(!needAuth())return;
     var tasks=[];Array.prototype.forEach.call(box.children,function(r){
       var sid=r.querySelector("[name=staff]").value,ti=r.querySelector("[name=title]").value.trim();if(!sid||!ti)return;
