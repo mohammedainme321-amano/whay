@@ -723,7 +723,9 @@ function tPlan(m,k){
     if(tasks.length){tasks.forEach(function(t){t.activity_id=r1.data.id});
       var r2=await q(function(){return sb.from("subtasks").insert(tasks)});if(r2.error){toast(friendly(r2.error));return}}
     toast("تم حفظ النشاط مع "+tasks.length+" مهمة");load()};
-  add(p,f);add(m,p);
+  add(p,f)
+    if(S.user)
+    ;add(m,p);
   inDept(D.activities,k).forEach(function(a){
     var ts=D.subtasks.filter(function(t){return t.activity_id===a.id}),c=el("div","card");
     add(c,el("h4","",a.title),el("p","mu",arShortDate(a.start_date)+" ← "+arShortDate(a.end_date)),a.description?el("p","",a.description):null,bar(avg(ts)));
@@ -748,7 +750,9 @@ function notes(m,k,table,title,isIssue){
     var o={department:k,title:f.elements.title.value.trim(),details:f.elements.details.value.trim(),status:isIssue?"open":"pending"};
     if(isIssue)o.severity=f.elements.sev.value;
     done(await q(function(){return sb.from(table).insert(o)}),"تمت الإضافة")};
-  add(p,f);add(m,p);
+  add(p,f)
+    if(S.user)
+    ;add(m,p);
   inDept(D[table],k).forEach(function(r){
     var c=el("div","card"),ok=r.status==="resolved"||r.status==="approved";
     add(c,el("h4","",r.title),el("span","pill"+(ok?" ok":""),({open:"مفتوح",resolved:"تم الحل",pending:"بانتظار الاعتماد",approved:"معتمد",rejected:"مرفوض"})[r.status]||r.status),
@@ -769,7 +773,9 @@ function vStaff(m){
     fld("القسم",sel("dept",DEPTS.map(function(d){return[d[0],d[1]]})))),el("button","btn pri","حفظ"));
   f.onsubmit=async function(e){e.preventDefault();if(!needAuth())return;var x=f.elements;
     done(await q(function(){return sb.from("staff").insert({name:x.name.value.trim(),phone:x.phone.value.trim(),role:x.role.value.trim(),department:x.dept.value})}),"تمت إضافة الموظف")};
-  add(p,f);add(m,p);
+  add(p,f)
+    if(S.user)
+          ;add(m,p);
   var g=el("div","grid");
   D.staff.forEach(function(s){
     var card=el("div","card");
@@ -842,7 +848,9 @@ function render(){
   tabsArr.forEach(function(x){
     var a=el("a","tab"+(S.view===x[2]?" on":""),x[1]);a.href=x[0];add(nv,a)});
   DEPTS.forEach(function(d){var a=el("a","tab"+(S.view==="dept"&&S.dept===d[0]?" on":""),d[2]+" "+d[1].replace("قسم ",""));a.href="#dept/"+d[0]+"/plan";add(nv,a)});
-  if(S.view==="dept"&&S.dept){if(S.user)vDept(m,S.dept);else gate(m,S.dept)}
+  
+  /* السماح بعرض الأقسام وسجل المهام للجميع بدون إجبار على تسجيل الدخول */
+  if(S.view==="dept"&&S.dept)vDept(m,S.dept);
   else if(S.view==="staff")vStaff(m);
   else if(S.view==="reports")vReports(m);
   else vHome(m);
@@ -853,21 +861,7 @@ function route(){
   S.view=h[0]||"home";S.dept=h[1];S.tab=h[2]||"plan";
   if(S.view==="dept"&&!DEPTS.some(function(d){return d[0]===S.dept}))S.view="home";
   render();window.scrollTo(0,0);
-  if(S.view==="dept"&&!S.user){$("login").hidden=false;toast("سجّل الدخول للدخول إلى مساحة القسم")}
 }
-
-window.addEventListener("hashchange",route);
-window.addEventListener("unhandledrejection",function(e){if(e.preventDefault)e.preventDefault();toast(friendly(errText(e.reason)))});
-
-updateHeaderDate();
-setUser(null);
-(async function(){
-  var r=await q(function(){return sb.auth.getSession()}),s=r.data&&r.data.session;
-  setUser(s?s.user:null);route();
-  try{sb.auth.onAuthStateChange(function(ev,session){var em=session&&session.user&&session.user.email||null;if((S.user&&S.user.email||null)===em)return;setUser(session?session.user:null)})}catch(e){}
-})();
-load();
-})();
 </script>
 </body>
 </html>
