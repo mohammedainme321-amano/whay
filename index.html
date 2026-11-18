@@ -839,33 +839,31 @@ function gate(m,k){
 /* ---------- router ---------- */
 function render(){
   var m=$("app"),nv=$("nav");m.textContent="";nv.textContent="";
-  [["#home","📊 لوحة المتابعة","home"],["#reports","📄 التقارير","reports"],["#staff","👥 إدارة الكوادر","staff"]].forEach(function(x){
-    var a=el("a","tab"+(S.view===x[2]?" on":""),x[1]);a.href=x[0];add(nv,a)});
-  DEPTS.forEach(function(d){var a=el("a","tab"+(S.view==="dept"&&S.dept===d[0]?" on":""),d[2]+" "+d[1].replace("قسم ",""));a.href="#dept/"+d[0]+"/plan";add(nv,a)});
-  if(S.view==="dept"&&S.dept){if(S.user)vDept(m,S.dept);else gate(m,S.dept)}
-  else if(S.view==="staff")vStaff(m);
-  else if(S.view==="reports")vReports(m);
-  else vHome(m);
-}
-function route(){
-  var h=(location.hash||"#home").slice(1).split("/");
-  S.view=h[0]||"home";S.dept=h[1];S.tab=h[2]||"plan";
-  if(S.view==="dept"&&!DEPTS.some(function(d){return d[0]===S.dept}))S.view="home";
-  render();window.scrollTo(0,0);
-  if(S.view==="dept"&&!S.user){$("login").hidden=false;toast("سجّل الدخول للدخول إلى مساحة القسم")}
-}
-window.addEventListener("hashchange",route);
-window.addEventListener("unhandledrejection",function(e){if(e.preventDefault)e.preventDefault();toast(friendly(errText(e.reason)))});
+  
+  /* إعادة زر الصفحة الرئيسية (لوحة المتابعة) في المقدمة */
+  var tabsArr=[["#home","📊 لوحة المتابعة","home"],["#reports","📄 التقارير","reports"],["#staff","👥 إدارة الكوادر","staff"]];
+  tabsArr.forEach(function(x){
+    var a=el("a","tab"+(S.view===x[2]?" on":""),x[1]);
+    a.href=x[0];
+    add(nv,a);
+  });
 
-updateHeaderDate();
-setUser(null);
-(async function(){
-  var r=await q(function(){return sb.auth.getSession()}),s=r.data&&r.data.session;
-  setUser(s?s.user:null);route();
-  try{sb.auth.onAuthStateChange(function(ev,session){var em=session&&session.user&&session.user.email||null;if((S.user&&S.user.email||null)===em)return;setUser(session?session.user:null)})}catch(e){}
-})();
-load();
-})();
+  DEPTS.forEach(function(d){
+    var a=el("a","tab"+(S.view==="dept"&&S.dept===d[0]?" on":""),d[2]+" "+d[1].replace("قسم ",""));
+    a.href="#dept/"+d[0]+"/plan";
+    add(nv,a);
+  });
+
+  if(S.view==="dept"&&S.dept){
+    if(S.user)vDept(m,S.dept);else gate(m,S.dept);
+  } else if(S.view==="staff"){
+    vStaff(m);
+  } else if(S.view==="reports"){
+    vReports(m);
+  } else {
+    vHome(m);
+  }
+}
 </script>
 </body>
 </html>
